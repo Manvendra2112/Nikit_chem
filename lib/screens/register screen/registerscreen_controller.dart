@@ -1,7 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikitchem/screens/dashboard/DashboardScreen.dart';
+import 'package:http/http.dart' as http;
+import 'package:nikitchem/constant/api_constant.dart';
+import 'package:nikitchem/constant/constant_string.dart';
+import 'package:nikitchem/screens/login/LoginScreen.dart';
+import 'package:nikitchem/support/alert_dialog_manager.dart';
 import 'package:nikitchem/support/flutter_font_style.dart';
+import 'package:nikitchem/support/imageassets.dart';
+
+import '../../support/app_theme.dart';
 
 class RegesterScreenController extends GetxController {
   // Text Controllers
@@ -33,38 +41,23 @@ class RegesterScreenController extends GetxController {
   final RxString selectedStaff = ''.obs;
   final RxString selectedState = ''.obs;
   final RxString selectedCity = ''.obs;
+  final RxList<String> stateList = <String>[].obs;
   final RxList<String> cityList = <String>[].obs;
 
-  // Dummy Staff List
+  // Static Staff List
   final List<String> staffList = [
     'Manager',
     'Sales Representative',
     'Technician',
     'Support Staff',
+    'Hr Head', // Added to match Postman
   ];
-
-  // Dummy State List
-  final List<String> stateList = [
-    'Maharashtra',
-    'Delhi',
-    'Karnataka',
-    'Tamil Nadu',
-    'Gujarat',
-  ];
-
-  // Dummy State-to-City Mapping
-  final Map<String, List<String>> stateToCities = {
-    'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik'],
-    'Delhi': ['New Delhi', 'South Delhi', 'North Delhi'],
-    'Karnataka': ['Bangalore', 'Mysore', 'Hubli'],
-    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai'],
-    'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara'],
-  };
 
   @override
   void onInit() {
     super.onInit();
     selectedStaff.value = '';
+    fetchStates();
   }
 
   @override
@@ -90,10 +83,85 @@ class RegesterScreenController extends GetxController {
     super.onClose();
   }
 
-  void loadCities(String state) {
+  Future<void> fetchStates() async {
+    isLoading.value = true;
+    update();
+
+    try {
+      var response = await APIConstant.gethitAPI(
+        Get.context!,
+        ConstantString.get,
+        ConstantString.getStates,
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response != null) {
+        var responseJson = jsonDecode(response);
+        if (responseJson['code'] == 200 && responseJson['states'] != null) {
+          stateList.clear();
+          stateList.addAll(List<String>.from(responseJson['states']));
+          print('States fetched: ${stateList.length}');
+        } else {
+          AlertDialogManager.getSnackBarMsg(
+            "Error",
+            responseJson['message'] ?? "Failed to fetch states",
+            false,
+            Get.context!,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching states: $e');
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to fetch states",
+        false,
+        Get.context!,
+      );
+    } finally {
+      isLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> loadCities(String state) async {
+    isLoading.value = true;
     cityList.clear();
-    if (stateToCities.containsKey(state)) {
-      cityList.addAll(stateToCities[state]!);
+    update();
+
+    try {
+      var response = await APIConstant.gethitAPI(
+        Get.context!,
+        ConstantString.get,
+        "${ConstantString.getCities}/$state",
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response != null) {
+        var responseJson = jsonDecode(response);
+        if (responseJson['code'] == 200 && responseJson['cities'] != null) {
+          cityList.addAll(List<String>.from(responseJson['cities']));
+          print('Cities fetched for $state: ${cityList.length}');
+        } else {
+          AlertDialogManager.getSnackBarMsg(
+            "Error",
+            responseJson['message'] ?? "Failed to fetch cities",
+            false,
+            Get.context!,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching cities: $e');
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to fetch cities",
+        false,
+        Get.context!,
+      );
+    } finally {
+      isLoading.value = false;
+      update();
     }
   }
 
@@ -189,6 +257,57 @@ class RegesterScreenController extends GetxController {
       return "Field should contain letters, numbers, spaces, commas, or periods";
     }
     return null;
+  }
+
+  Future<void> showSuccessPopup(BuildContext context) async {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            width: screenWidth * 0.8,
+            padding: EdgeInsets.all(screenWidth * 0.05),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  ImageAssets.tickwithstar,
+                  width: 100,
+                  height: 55,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                Text(
+                  "You have Registered Successful. After approval from admin you can login to system.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Poppins-Medium",
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    await Future.delayed(Duration(seconds: 2));
+    Navigator.of(context).pop();
+    Get.off(() => LoginScreen());
   }
 
   Future<void> createAccount(BuildContext context) async {
@@ -293,9 +412,69 @@ class RegesterScreenController extends GetxController {
       return;
     }
 
-    // If all validations pass, navigate to DashboardScreen
-    isLoading.value = false;
-    update();
-    Get.off(() => const DashboardScreen());
+    // Prepare form-data request
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(ConstantString.createAccount),
+      );
+
+      // Add headers
+      request.headers['Accept'] = 'application/json';
+
+      // Add form fields
+      request.fields['name'] = nameContr.text.trim();
+      request.fields['email'] = emailContr.text.trim();
+      request.fields['phone'] = phoneContr.text.trim();
+      request.fields['role'] = selectedStaff.value;
+      request.fields['state'] = selectedState.value;
+      request.fields['city'] = selectedCity.value;
+      request.fields['near_by_land'] = nearbyLandmarkContr.text.trim();
+      request.fields['password'] = passwordContr.text;
+      request.fields['password_confirmation'] = confirmPasswordContr.text;
+      request.fields['floor'] = floorContr.text.trim();
+      request.fields['address'] = addressContr.text.trim();
+
+      print('Request URL: ${ConstantString.createAccount}');
+      print('Request Headers: ${request.headers}');
+      print('Request Fields: ${request.fields}');
+
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: $responseBody');
+
+      isLoading.value = false;
+      update();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responseJson = jsonDecode(responseBody);
+        print("Register API success: $responseBody");
+        await showSuccessPopup(context);
+      } else {
+        var responseJson = jsonDecode(responseBody);
+        String errorMessage = responseJson['message'] ?? 'Registration failed';
+        if (responseJson['errors'] != null) {
+          errorMessage += ': ${jsonEncode(responseJson['errors'])}';
+        }
+        AlertDialogManager.getSnackBarMsg(
+          "Error",
+          errorMessage,
+          false,
+          context,
+        );
+      }
+    } catch (e) {
+      isLoading.value = false;
+      update();
+      print("Error: $e");
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Something went wrong: $e",
+        false,
+        context,
+      );
+    }
   }
 }

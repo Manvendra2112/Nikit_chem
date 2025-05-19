@@ -52,6 +52,8 @@
     static const String tick= 'assets/images/tick.png';
     static const String nontick= 'assets/images/nontick.png';
     static const String ticknew= 'assets/images/ticknew.png';
+    static const String tickwithstar= 'assets/images/tickwithstar.png';
+
 
 
 

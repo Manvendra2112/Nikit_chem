@@ -10,6 +10,9 @@ class ConstantString {
   static const String userIdKey = "user_id";
   static final String myDealer = "${base_Url}/my-dealer";
   static final String createCarpenter = "${base_Url}/create-carpenter";
+  static final String getStates = "${base_Url}/get-states";
+  static final String getCities = "${base_Url}/cities"; // Base for /cities/{state}
+  static final String createAccount = "${base_Url}/create-account";
 
 
   static const String get = 'GET';

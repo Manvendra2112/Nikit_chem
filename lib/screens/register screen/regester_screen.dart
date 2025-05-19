@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikitchem/constant/custom_widget.dart';
-import 'package:nikitchem/screens/dashboard/DashboardScreen.dart';
 import 'package:nikitchem/screens/register%20screen/registerscreen_controller.dart';
 import 'package:nikitchem/support/app_theme.dart';
 import 'package:nikitchem/support/flutter_font_style.dart';
@@ -106,7 +105,7 @@ class RegesterScreen extends StatelessWidget {
                   child: CustomWidget.stringTypeDropDown(
                     controller.selectedStaff.value,
                     controller.staffList,
-                        colorDropDown:AppColor.textFildtextcolor.withOpacity(0.2) ,
+                    colorDropDown: AppColor.textFildtextcolor.withOpacity(0.2),
                         (value) {
                       if (value != null) {
                         controller.selectedStaff.value = value;
@@ -119,7 +118,6 @@ class RegesterScreen extends StatelessWidget {
                     isMandatory: true,
                   ),
                 ),
-
                 SizedBox(height: screenHeight * 0.02),
                 // Phone Number
                 Align(
@@ -346,7 +344,7 @@ class RegesterScreen extends StatelessWidget {
                   child: DropdownButtonFormField<String>(
                     value: controller.selectedState.value.isEmpty ? null : controller.selectedState.value,
                     decoration: InputDecoration(
-                      hintText: "Select State",
+                      hintText: controller.isLoading.value ? "Loading States..." : "Select State",
                       filled: true,
                       fillColor: AppColor.textFildtextcolor.withOpacity(0.2),
                       border: OutlineInputBorder(
@@ -360,7 +358,7 @@ class RegesterScreen extends StatelessWidget {
                         size: 20,
                       ),
                     ),
-                    icon: const SizedBox.shrink(), // Hide default dropdown arrow
+                    icon: const SizedBox.shrink(),
                     items: controller.stateList.map((state) {
                       return DropdownMenuItem<String>(
                         value: state,
@@ -402,11 +400,11 @@ class RegesterScreen extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05,),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                   child: DropdownButtonFormField<String>(
                     value: controller.selectedCity.value.isEmpty ? null : controller.selectedCity.value,
                     decoration: InputDecoration(
-                      hintText: "Select City",
+                      hintText: controller.isLoading.value ? "Loading Cities..." : "Select City",
                       filled: true,
                       fillColor: AppColor.textFildtextcolor.withOpacity(0.2),
                       border: OutlineInputBorder(
@@ -420,7 +418,7 @@ class RegesterScreen extends StatelessWidget {
                         size: 20,
                       ),
                     ),
-                    icon: const SizedBox.shrink(), // Hide default dropdown arrow
+                    icon: const SizedBox.shrink(),
                     items: controller.cityList.map((city) {
                       return DropdownMenuItem<String>(
                         value: city,
