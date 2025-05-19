@@ -6,11 +6,15 @@ import 'package:nikitchem/support/app_theme.dart';
 import 'package:nikitchem/support/imageassets.dart';
 
 class AddCarpanterScreen extends StatelessWidget {
+
+
   final String dealerId;
   const AddCarpanterScreen({super.key, required this.dealerId});
 
   @override
   Widget build(BuildContext context) {
+    double width = CustomWidget.getWidth(context);
+    double height = CustomWidget.getHeight(context);
     print('the dealer id is $dealerId');
     return GetBuilder<AddCarpenterScreenController>(
       init: AddCarpenterScreenController(dealerId: dealerId),
@@ -206,6 +210,7 @@ class AddCarpanterScreen extends StatelessWidget {
                   fillColorFiled: true,
                   borderRadius: 20,
                 ),
+                SizedBox(height: height*0.06,),
                 Padding(
                   padding: EdgeInsets.fromLTRB(25, 10, 25, 5),
                   child: CustomWidget.elevatedCustomButton(
@@ -220,7 +225,6 @@ class AddCarpanterScreen extends StatelessWidget {
                     borderRadius: 10,
                   ),
                 ),
-                SizedBox(height: 20),
               ],
             ),
           ),

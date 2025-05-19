@@ -6,6 +6,8 @@ import 'package:nikitchem/screens/dashboard/visitscreen/VisitCompletedController
 import 'package:nikitchem/support/app_theme.dart';
 import 'package:nikitchem/support/imageassets.dart';
 
+import '../DashboardScreen.dart';
+
 class VisitCompletedScreen extends StatelessWidget {
   VisitCompletedScreen({super.key});
 
@@ -19,34 +21,29 @@ class VisitCompletedScreen extends StatelessWidget {
           return Scaffold(
               backgroundColor: Colors.white,
 
-
-
               body: ListView(
             shrinkWrap: true,
             children: [
               InkWell(
                   onTap: () {
-                    Get.back();
+                    Get.offAll(
+                          () => const DashboardScreen(),
+                      arguments: {'selectedIndex': 0, 'refresh': true},
+                    );
                   },
                   child: Container(
 
                     alignment: Alignment.topLeft,
-                    margin: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                    margin: EdgeInsets.fromLTRB(28, 25, 25, 0),
                     child: Image.asset(
                       ImageAssets.backbutton,
                       width: 20,
                       height: 20,
                     ),
                   )),
-              SizedBox(
-                height: 10,
-              ),
-
-
                     Container(
-
                       alignment: Alignment.center,
-                      margin: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                      margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
                       child: Text(
                         "Successful Visit",
                         maxLines: 2,
@@ -65,14 +62,14 @@ class VisitCompletedScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 26,
-                      height: 26,
+                      width: 28,
+                      height: 28,
                       //margin: EdgeInsets.fromLTRB(20, 20, 20, 5),
                       decoration: BoxDecoration(
                           color: AppColor.bgColor20.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(20)),
                       child: Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(7.0),
 
 
                         child: Image.asset(
@@ -83,9 +80,8 @@ class VisitCompletedScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: 5,
+                      width: 12,
                     ),
-
 
                      Text("Shop Name :",
                           style: TextStyle(
@@ -103,85 +99,89 @@ class VisitCompletedScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              // SizedBox(height: 20,),
+              // Container(
+              //   margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+              //   child: Text("Are they Interested ?",
+              //
+              //       style: TextStyle(
+              //           fontFamily: "Poppins-Medium",
+              //           fontSize: 16,
+              //           fontWeight: FontWeight.w500)),
+              // ),
+              //
+              //
+              // Container(
+              //
+              //   alignment: Alignment.topLeft,
+              //
+              //   margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+              //   child: Row(mainAxisAlignment: MainAxisAlignment.start,
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       Radio<bool>(
+              //         value: true,
+              //         groupValue: controller.isUsingProduct,
+              //         onChanged: (value) => controller.toggleProductUsage(value!),
+              //         activeColor: AppColor.positiveButton,
+              //       ),
+              //       const Text('Yes'),
+              //       Radio<bool>(
+              //         value: false,
+              //         groupValue: controller.isUsingProduct,
+              //         onChanged: (value) => controller.toggleProductUsage(value!),
+              //         activeColor: AppColor.positiveButton,
+              //       ),
+              //       Text('No'),
+              //     ],
+              //   ),
+              // ),
+
+              // // remark section
+              // Container(padding: EdgeInsets.fromLTRB(35, 10, 0, 0),
+              //   child: Text("Remarks",
+              //       maxLines: 2,
+              //       style: TextStyle(
+              //           fontFamily: "Poppins-Medium",
+              //           fontSize: 16,
+              //           fontWeight: FontWeight.w500)),
+              // ),
+              //
+              // CustomWidget.textInputFiled(
+              //   enabledBox: true,
+              //   borderWidth: 1,
+              //   topPadding: 10,
+              //   leftPadding: 20,
+              //   rightPadding: 20,
+              //   maxLine: 6,
+              //   minLine: 5,
+              //   height: 120 * 0.9,
+              //   textInputType: TextInputType.multiline,
+              //   controller.remarksController,
+              //   fillColors: AppColor.positiveButton.withOpacity(0.1),
+              //   focusNode: controller.remarksFocus,
+              //   hintText: "Write Here....",
+              //   fillColorFiled: true,
+              //   enableBorder: true,
+              //   borderRadius:20.0,
+              //
+              // ),
+
+
               Container(
-                margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: Text("Are they Interested ?",
-
-                    style: TextStyle(
-                        fontFamily: "Poppins-Medium",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-              ),
-
-
-              Container(
-
-                alignment: Alignment.topLeft,
-
-                margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                child: Row(mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Radio<bool>(
-                      value: true,
-                      groupValue: controller.isUsingProduct,
-                      onChanged: (value) => controller.toggleProductUsage(value!),
-                      activeColor: AppColor.positiveButton,
-                    ),
-                    const Text('Yes'),
-                    Radio<bool>(
-                      value: false,
-                      groupValue: controller.isUsingProduct,
-                      onChanged: (value) => controller.toggleProductUsage(value!),
-                      activeColor: AppColor.positiveButton,
-                    ),
-                    Text('No'),
-                  ],
-                ),
-              ),
-              Container(padding: EdgeInsets.fromLTRB(35, 10, 0, 0),
-                child: Text("Remarks",
+                margin: EdgeInsets.fromLTRB(35, 30, 20, 5),
+                child: Text("Add Order Details",
                     maxLines: 2,
                     style: TextStyle(
                         fontFamily: "Poppins-Medium",
                         fontSize: 16,
                         fontWeight: FontWeight.w500)),
               ),
-
-              CustomWidget.textInputFiled(
-                enabledBox: true,
-                borderWidth: 1,
-                topPadding: 10,
-                leftPadding: 20,
-                rightPadding: 20,
-                maxLine: 6,
-                minLine: 5,
-                height: 120 * 0.9,
-                textInputType: TextInputType.multiline,
-                controller.remarksController,
-                fillColors: AppColor.positiveButton.withOpacity(0.1),
-                focusNode: controller.remarksFocus,
-                hintText: "Write Here....",
-                fillColorFiled: true,
-                enableBorder: true,
-                borderRadius:20.0,
-
-              ),
               Container(
-                margin: EdgeInsets.fromLTRB(35, 20, 20, 5),
-                child: Text("Add Product Details",
-                    maxLines: 2,
-                    style: TextStyle(
-                        fontFamily: "Poppins-Medium",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                padding: EdgeInsets.fromLTRB(10, 15, 10, 30),
                 width: 390 * 0.9,
-                height: 385 * 0.9,
+               // height: 385 * 0.9,
                 decoration: BoxDecoration(
                    // color: AppColor.bgColor20.withOpacity(0.2),
                    // color: AppColor.bgColorpr.withOpacity(0.2),
@@ -189,8 +189,6 @@ class VisitCompletedScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   children: [
-
-
                     Padding(
                       padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: CustomWidget.stringTypeDropDown(
@@ -201,7 +199,7 @@ class VisitCompletedScreen extends StatelessWidget {
                       }, controller.productFocus,
                           isMandatory: false,
                           hideBorder: false,
-                          label: "Enter Product Name",
+                          label: "Select Product",
                           hideLabel: true),
                     ),
 
@@ -216,6 +214,7 @@ class VisitCompletedScreen extends StatelessWidget {
                       }, controller.quantityFocus,
                           isMandatory: false,
                           hideBorder: false,
+                          label: "Quantity",
                           hideLabel: true),
                     ),
                     CustomWidget.textInputFiled(
@@ -226,10 +225,15 @@ class VisitCompletedScreen extends StatelessWidget {
                       cursorColors: Colors.black,
                       rightPadding: 20,
                       enableBorder: true,
-                      controller.productContro,
+                      controller.priceController,
                       fillColors: AppColor.white,
-                      focusNode: controller.productFocus,
+                      focusNode: controller.priceFocus,
                       hintText: "Price",
+                      hintStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500
+                      ),
                       fillColorFiled: true,
                       borderRadius: 10,
                     ),
@@ -239,10 +243,15 @@ class VisitCompletedScreen extends StatelessWidget {
                       topPadding: 10,
                       leftPadding: 20,
                       rightPadding: 20,
-                      controller.productContro,
+                      controller.discountController,
                       fillColors: AppColor.white,
-                      focusNode: controller.productFocus,
+                      focusNode: controller.discountFocus,
                       hintText: "Discount",
+                      hintStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500
+                      ),
                       fillColorFiled: true,
                       borderRadius: 10,
                     ),
@@ -252,10 +261,15 @@ class VisitCompletedScreen extends StatelessWidget {
                       topPadding: 10,
                       leftPadding: 20,
                       rightPadding: 20,
-                      controller.productContro,
+                      controller.totalpriceController,
                       fillColors: AppColor.white,
-                      focusNode: controller.productFocus,
+                      focusNode: controller.totalPriceFocus,
                       hintText: "Total Price",
+                      hintStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500
+                      ),
                       fillColorFiled: true,
                       enableBorder: true,
 
@@ -289,8 +303,46 @@ class VisitCompletedScreen extends StatelessWidget {
                         fontWeight: FontWeight.w500)),
               ),
 
+
+              // remark section
+              Container(padding: EdgeInsets.fromLTRB(35, 10, 0, 0),
+                child: Text("Remarks",
+                    maxLines: 2,
+                    style: TextStyle(
+                        fontFamily: "Poppins-Medium",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500)),
+              ),
+
+              CustomWidget.textInputFiled(
+                enabledBox: true,
+                borderWidth: 1,
+                topPadding: 10,
+                leftPadding: 20,
+                rightPadding: 20,
+                maxLine: 6,
+                minLine: 5,
+                height: 120 * 0.9,
+                textInputType: TextInputType.multiline,
+                controller.remarksController,
+                fillColors: AppColor.positiveButton.withOpacity(0.1),
+                focusNode: controller.remarksFocus,
+                hintText: "Write Here....",
+                hintStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                    color: AppColor.blackheading
+                ),
+                fillColorFiled: true,
+                enableBorder: true,
+                borderRadius:20.0,
+
+              ),
+              SizedBox(height: height*0.02,),
+
+
               Padding(
-                padding: EdgeInsets.fromLTRB(25, 10, 25, 5),
+                padding: EdgeInsets.fromLTRB(25, 10, 25, 30),
                 child: CustomWidget.elevatedCustomButton(
                   context,
                   "Submit",

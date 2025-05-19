@@ -62,12 +62,12 @@ class HomeScreenController extends GetxController {
           loginModel = responseJson; // Store full response
           update();
         } else {
-         // Get.snackbar("Error", responseJson['message'] ?? "Failed to fetch user details");
+          // Get.snackbar("Error", responseJson['message'] ?? "Failed to fetch user details");
           loginModel = {'user': {'name': 'User'}}; // Fallback
           update();
         }
       } else {
-       // Get.snackbar("Error", "Failed to fetch user details");
+        // Get.snackbar("Error", "Failed to fetch user details");
         loginModel = {'user': {'name': 'User'}}; // Fallback
         update();
       }

@@ -17,7 +17,9 @@ class ForgetPasswordScreen extends StatelessWidget {
         init: ForgetPasswordController(),
         builder: (controller){
 
-          return Scaffold(body:
+          return Scaffold(
+            backgroundColor: Colors.white,
+              body:
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,

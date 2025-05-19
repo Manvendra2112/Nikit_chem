@@ -6,8 +6,10 @@ import 'package:nikitchem/support/imageassets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../constant/custom_widget.dart';
 import '../../../support/alert_dialog_manager.dart';
+import '../../customUI/CustomBottomSheetScreen.dart';
 import '../carpenter/AddCarpanterScreen.dart';
 import 'adddelaer/AddDealerScreen.dart';
+import 'editdealer/EditDealerScreen.dart';
 
 class DealerScreen extends StatelessWidget {
   const DealerScreen({super.key});
@@ -28,17 +30,28 @@ class DealerScreen extends StatelessWidget {
               () => ListView(
             shrinkWrap: true,
             children: [
-              const SizedBox(height: 20),
-              buildSearchField(controller),
+              SizedBox(height: 25),
+
+              Text(
+                "Dealers",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontFamily: "Poppins-SemiBold",
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.headingtext,
+                ),
+              ),
+              const SizedBox(height: 20),              buildSearchField(controller),
               GestureDetector(
                 onTap: () {
                   print("Navigating to AddDealerScreen");
                   Get.to(() => AddDealerScreen());
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: Image.asset(
-                    ImageAssets.dottedbutton,
+                    ImageAssets.adddealerbutton,
                     width: 80,
                     height: 70,
                     fit: BoxFit.contain,
@@ -313,7 +326,6 @@ class DealerScreen extends StatelessWidget {
                                     print("Navigating to AddCarpanterScreen with dealerId: ${dealer['id']}");
                                     Get.to(() => AddCarpanterScreen(
                                       dealerId: dealer['id']?.toString() ?? '',
-                                     // dealerName: dealer['delearname'] ?? '',
                                     ));
                                   },
                                   child: Image.asset(
@@ -348,33 +360,60 @@ class DealerScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          CustomWidget.elevatedCustomButton(
-            context,
-            "I have Arrived at the location",
-                () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  decoration: const BoxDecoration(
-                    color: AppColor.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                  ),
-                  padding: const EdgeInsets.only(top: 10, right: 15, left: 15, bottom: 0),
-                  child: const SizedBox(), // Replace with CustomBottomsheetScreen if available
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomWidget.elevatedCustomButton(
+                  context,
+                  "Edit",
+                      () {
+                    print("Navigating to EditDealerScreen");
+                    Get.to(() => EditDealerScreen());
+                  },
+                  fontSize: 12,
+                  textColor: Colors.white,
+                  bgColor: AppColor.positiveButton,
+                  width: 180 * 0.9,
+                  height: 50 * 0.9,
+                  borderRadius: 10,
+                  weight: FontWeight.w500,
                 ),
-              );
-            },
-            fontSize: 12,
-            textColor: Colors.white,
-            bgColor: AppColor.positiveButton,
-            width: 390 * 0.9,
-            height: 50 * 0.9,
-            borderRadius: 10,
+                CustomWidget.elevatedCustomButton(
+                  context,
+                  "Arrived",
+                      () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => Container(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        decoration: const BoxDecoration(
+                          color: AppColor.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(40),
+                            topRight: Radius.circular(40),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 15,
+                        ),
+                        child: CustomBottomsheetScreen(),
+                      ),
+                    );
+                  },
+                  fontSize: 12,
+                  textColor: Colors.white,
+                  bgColor: AppColor.positiveButton,
+                  width: 180 * 0.9,
+                  height: 50 * 0.9,
+                  borderRadius: 10,
+                  weight: FontWeight.w500,
+                ),
+              ],
+            ),
           ),
         ],
       ),

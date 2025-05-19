@@ -55,7 +55,9 @@ class OTPScreen extends StatelessWidget {
         init:  OTPController(),
 
         builder: (controller){
-          return Scaffold(body: Column(
+          return Scaffold(
+            backgroundColor: Colors.white,
+              body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
 

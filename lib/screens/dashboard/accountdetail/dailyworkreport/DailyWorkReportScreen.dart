@@ -1,127 +1,304 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:nikitchem/screens/dashboard/accountdetail/dailyworkreport/DailyWorkReportController.dart';
+import 'package:intl/intl.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:nikitchem/support/app_theme.dart';
+import 'package:nikitchem/support/imageassets.dart';
+import '../../visitscreen/VisitNotCompletedScreen.dart';
+import 'DailyWorkReportController.dart';
+import 'visit completed/visitcompleted_screen.dart';
+import 'visit not completed/visitnotcompletedscreen.dart';
 
-import '../../../../support/imageassets.dart';
+class DailyWorkReport extends StatelessWidget {
+  const DailyWorkReport({super.key});
 
-class DailyWorkReportScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return GetBuilder<DailyWorkReportController>
-
-      (
-
-        init: DailyWorkReportController(),
-        builder: (controller) {
-          return Scaffold(
-              backgroundColor: Colors.white,
-
-              body: ListView(shrinkWrap: true, children: [
-            InkWell(
-                onTap: () {
-                  Get.back();
-                },
-                child: Container(
-
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                  child: Image.asset(
-                    ImageAssets.backbutton,
-                    width: 20,
-                    height: 20,
-                  ),
-                )),
-
-
-
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
-              child: Text("Daily Work Report",maxLines:2,style: TextStyle(
-                  fontSize: 18,color: AppColor.headingtext,
-                  fontFamily: "Poppins-Medium",fontWeight: FontWeight.w500),),
+  // Reusable function for info rows (Route, Distance, etc.)
+  Widget buildInfoRow(
+      String leftText, String rightText, double fontSize, double spacing) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              leftText,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w400,
+                fontFamily: "Cabin-Regular",
+                color: AppColor.headingtext,
+              ),
             ),
-
-SizedBox(height: 20),
-            ListView.builder(
-              shrinkWrap: true,
-                itemCount: 4,
-                itemBuilder: (BuildContext,index){
-              return   commonWidget("Visited Location : Ambala, Punjab", "01 April, 2025",
-                  "Visited Dealers  : 03", "Completed Leads : 02");
-
-            })
-
-
-          ],));
-        });
+            Text(
+              rightText,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w400,
+                fontFamily: "Cabin-Regular",
+                color: AppColor.headingtext,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: spacing),
+        buildDottedDivider(),
+        SizedBox(height: spacing),
+      ],
+    );
   }
 
-  Widget commonWidget(String location, String date, String delaercount,
-      String leades) {
-    return Container(
-        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
-            color: AppColor.positiveButton.withOpacity(0.1)),
-        
-        child: Column(
-mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height:45,),
-          Expanded(
-            child: Text(location, style: TextStyle(fontSize: 12,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins-Medium"),),
+  //Reusable function for single dashed line divider
+  Widget buildDottedDivider() {
+    return DottedBorder(
+      color: const Color(0xFFA0A0A0),
+      strokeWidth: 1,
+      dashPattern: const [4, 4],
+      child: Container(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    final double padding = width * 0.05; // Single padding
+    final double fontSizeLarge = width * 0.05; // ~18px on 360px
+    final double fontSizeMedium = width * 0.045; // ~16px
+    final double fontSizeSmall = width * 0.04; // ~14px
+    final double spacing = height * 0.02; // ~14px on 720px
+
+    return GetBuilder<DailyWorkReportController>(
+      init: DailyWorkReportController(),
+      builder: (controller) {
+        // Show SnackBar if data is empty on screen load
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (controller.isDataEmpty()) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("No report data available")),
+            );
+          }
+        });
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.all(padding),
+              children: [
+                SizedBox(
+                  height: height * 0.01,
+                ),
+                // Back button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: InkWell(
+                    onTap: () {
+                      print('Back button tapped');
+                      Get.back();
+                    },
+                    child: Image.asset(
+                      ImageAssets.backbutton,
+                      width: width * 0.08, // ~30px
+                      height: width * 0.08,
+                    ),
+                  ),
+                ),
+                // Title
+                Center(
+                  child: Text(
+                    "Daily Work Report",
+                    style: TextStyle(
+                      fontSize: fontSizeLarge,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Poppins-Medium",
+                      color: AppColor.headingtext,
+                    ),
+                  ),
+                ),
+                SizedBox(height: spacing * 2),
+                // Row with column and date container
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Column with texts
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Daily Work Report",
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "Poppins-Medium",
+                              color: AppColor.headingtext,
+                            ),
+                          ),
+                          Text(
+                            "Check your daily work report",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Cabin-Regular",
+                              color: Color(0xffA0A0A0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Date container
+                    GestureDetector(
+                      onTap: () => controller.selectDate(context),
+                      child: Container(
+                        padding: EdgeInsets.all(padding * 0.5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color(0xFFf4611f).withOpacity(0.2),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(width * 0.02),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              DateFormat('dd MMMM, yyyy')
+                                  .format(controller.selectedDate),
+                              style: TextStyle(
+                                fontSize: fontSizeSmall,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: "Cabin-Regular",
+                                color: AppColor.headingtext,
+                              ),
+                            ),
+                            SizedBox(width: spacing * 0.5),
+                            Icon(
+                              Icons.calendar_today,
+                              size: width * 0.05, // ~18px
+                              color: AppColor.headingtext,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: spacing * 3),
+                // Main container
+                Container(
+                  padding: EdgeInsets.all(padding),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFf4611f).withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(width * 0.07),
+                  ),
+                  child: Column(
+                    children: [
+                      buildInfoRow(
+                        "Route :",
+                        controller.reportData['route'] ?? "N/A",
+                        15,
+                        spacing,
+                      ),
+                      buildInfoRow(
+                        "Distance :",
+                        controller.reportData['distance'] ?? "N/A",
+                        15,
+                        spacing,
+                      ),
+                      buildInfoRow(
+                        "Total Order :",
+                        controller.reportData['totalOrder'] ?? "N/A",
+                        15,
+                        spacing,
+                      ),
+                      buildInfoRow(
+                        "Success Rate :",
+                        controller.reportData['successRate'] ?? "N/A",
+                        15,
+                        spacing,
+                      ),
+                      SizedBox(height: spacing),
+                      // Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                controller.handleSuccessfulVisit(1);
+                                if (controller.isDataEmpty()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("No report data available"),
+                                    ),
+                                  );
+                                } else {
+                                  Get.to(() => VisitCompletedScreenNew());
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColor.positiveButton,
+                                padding: EdgeInsets.symmetric(vertical: height * 0.015),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(width * 0.03),
+                                ),
+                              ),
+                              child: Text(
+                                "Successful Visit",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: "Poppins-Medium",
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: spacing),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                controller.handleSuccessfulVisit(2);
+                                if (controller.isDataEmpty()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("No report data available"),
+                                    ),
+                                  );
+                                }else {
+                                  Get.to(() => VisitNotCompletedScreenNew());
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColor.positiveButton,
+                                padding: EdgeInsets.symmetric(vertical: height * 0.015),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(width * 0.03),
+                                ),
+                              ),
+                              child: Text(
+                                "Unsuccessful visit",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: "Poppins-Medium",
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: spacing),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-
-SizedBox(width: 10,),
-          Expanded(
-            child: Text(date, style: TextStyle(fontSize: 12,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins-Medium"),),
-          )
-
-        ],)
-,Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-        Expanded(
-          child: Container(
-          
-            margin: EdgeInsets.fromLTRB(0, 10, 10, 15),
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(10)),
-            child: Text(delaercount, style: TextStyle(fontSize: 12,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins-Medium"),),
-          ),
-        ),
-
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(0, 10, 10, 15),
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            decoration: BoxDecoration(borderRadius:BorderRadius.circular(10),
-                color: Colors.white),
-            child: Text(leades, style: TextStyle(fontSize: 12,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins-Medium"),),
-          ),
-        ),
-      ],)
-
-    ],));
+        );
+      },
+    );
   }
 }

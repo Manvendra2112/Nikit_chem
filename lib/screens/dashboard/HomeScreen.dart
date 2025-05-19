@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikitchem/screens/customUI/CustomBottomSheetScreen.dart';
+import 'package:nikitchem/screens/dashboard/DashboardScreen.dart';
 import 'package:nikitchem/screens/dashboard/HomeScreenController.dart';
 import 'package:nikitchem/screens/dashboard/dialogbox/PunchInController.dart';
+import 'package:nikitchem/support/flutter_font_style.dart';
 import 'package:nikitchem/support/imageassets.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constant/custom_widget.dart';
 import '../../support/alert_dialog_manager.dart';
 import '../../support/app_theme.dart';
+import '../Notification Screen/notification_screen.dart';
 import 'carpenter/AddCarpanterScreen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -80,89 +82,82 @@ class HomeScreen extends StatelessWidget {
                           height: 41,
                         ),
                       ),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColor.positiveButton,
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            ImageAssets.notification,
-                            width: 20,
-                            height: 20,
+                      GestureDetector(
+                        onTap: () => Get.to(() => const NotificationScreen()),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColor.positiveButton,
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              ImageAssets.notification,
+                              width: 20,
+                              height: 20,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ),                    ],
                   ),
                 ),
                 buildSearchField(controller),
+                SizedBox(height: height*0.015,),
+
                 Container(
                   margin: const EdgeInsets.fromLTRB(20, 10, 20, 5),
+                  padding: EdgeInsets.all(35),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: AppColor.bgColor20.withOpacity(0.2),
                   ),
                   width: 390 * 0.9,
-                  height: 118 * 0.8,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                    ),
-                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    width: 356 * 0.9,
-                    height: 74 * 0.4,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Text(
-                            controllerpunchin.isPunchedIn
-                                ? "Punch - In ${controllerpunchin.punchInTime.isNotEmpty ? controllerpunchin.punchInTime : controllerpunchin.formattedTime}, ${controllerpunchin.formattedDate}"
-                                : "Punch - Out ${controllerpunchin.punchOutTime}",
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                  height: 110 * 0.8,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        controllerpunchin.isPunchedIn
+                            ? "Punch - In ${controllerpunchin.punchInTime.isNotEmpty ? controllerpunchin.punchInTime : controllerpunchin.formattedTime}, ${controllerpunchin.formattedDate}"
+                            : "Punch - Out ${controllerpunchin.punchOutTime}",
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(width: 15),
+                      SizedBox(
+                        width: 30,
+                        height: 20,
+                        child: Switch(
+                          value: controllerpunchin.isPunchedIn,
+                          onChanged: (value) async {
+                            controllerpunchin.toggleFeature(value);
+                            if (!value) {
+                              await controllerpunchin.punchOut();
+                            }
+                          },
+                          activeColor: AppColor.positiveButton,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        const SizedBox(width: 15),
-                        SizedBox(
-                          width: 30,
-                          height: 20,
-                          child: Switch(
-                            value: controllerpunchin.isPunchedIn,
-                            onChanged: (value) async {
-                              controllerpunchin.toggleFeature(value);
-                              if (!value) {
-                                await controllerpunchin.punchOut();
-                              }
-                            },
-                            activeColor: AppColor.positiveButton,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
-                  child: Text(
-                    "Today’s Assigned Task",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      fontFamily: "Poppins-Medium",
-                    ),
+                SizedBox(height: height*0.01,),
+                Padding(
+                  padding: EdgeInsets.only(left: width*0.06,right:width*0.06 ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Track your Location',style: FTextStyle.custom(fontSize: 16,fontWeight: FontWeight.w500,color: AppColor.blackheading),),
+                      SizedBox(height: height*0.02,),
+                      Image.asset(ImageAssets.maps)
+                    ],
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
-                  child: Text("Lorem ipsum dolor sit amet, consectetur adipiscing "),
-                ),
+                SizedBox(height: height*0.02,),
+
                 Container(
                   margin: const EdgeInsets.fromLTRB(20, 10, 20, 5),
                   padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
@@ -171,38 +166,63 @@ class HomeScreen extends StatelessWidget {
                     color: AppColor.bgColor20.withOpacity(0.2),
                   ),
                   width: 390 * 0.9,
-                  height: 65 * 0.9,
+                  height: 70 * 0.9,
                   child: Row(
                     children: [
-                      Image.asset(
-                        ImageAssets.locationadd,
-                        width: 17,
-                        height: 19,
-                      ),
+                      // Image.asset(
+                      //   ImageAssets.locationadd,
+                      //   width: 17,
+                      //   height: 19,
+                      // ),
                       const SizedBox(width: 5),
                       Text(
-                        controller.selectedLocation ?? "Ambala, Punjab",
+                        controller.selectedLocation ?? "Today’s Beat Plan",
                         maxLines: 2,
-                        style: const TextStyle(fontFamily: "Poppins-Medium", fontSize: 10),
+                        style: const TextStyle(fontFamily: "Poppins-Medium", fontSize: 12),
                       ),
                       const Spacer(),
                       CustomWidget.elevatedCustomButton(
                         context,
-                        "Change Route",
+                        "View Plan",
                             () {
-                          controller.openLocationDialog();
+                          //controller.openLocationDialog();
+                              Get.offAll(
+                                    () => const DashboardScreen(),
+                                arguments: {'selectedIndex': 1, 'refresh': true},
+                              );
                         },
                         width: 125 * 0.9,
                         height: 39 * 0.9,
                         padding: const Padding(padding: EdgeInsets.all(1)),
-                        bgColor: AppColor.positiveButton,
-                        textColor: AppColor.white,
+                        bgColor: Colors.white,
+                        textColor: Colors.black,
                         weight: FontWeight.w500,
                         fontSize: 10,
                         borderRadius: 10,
                       ),
                     ],
                   ),
+                ),
+                SizedBox(height: height*0.02,),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
+                  child: Text(
+                    "Today’s Assigned Task",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      fontFamily: "Poppins-Medium",
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
+                  child: Text(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing ",style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12,
+                    fontFamily: "Poppins-Medium",
+                  ),),
                 ),
                 controller.filteredVisitData.isEmpty
                     ? const Padding(
@@ -234,7 +254,7 @@ class HomeScreen extends StatelessWidget {
                     return Column(
                       children: [
                         Container(
-                          margin: const EdgeInsets.fromLTRB(20, 10, 20, 5),
+                          margin: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                           padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
@@ -511,11 +531,43 @@ class HomeScreen extends StatelessWidget {
             context,
             "I have Arrived at the location",
                 () {
+              // showModalBottomSheet(
+              //   context: context,
+              //   isScrollControlled: true,
+              //   builder: (context) => Container(
+              //     height: MediaQuery.of(context).size.height * 0.2,
+              //     decoration: const BoxDecoration(
+              //       color: AppColor.white,
+              //       borderRadius: BorderRadius.only(
+              //         topLeft: Radius.circular(40),
+              //         topRight: Radius.circular(40),
+              //       ),
+              //     ),
+              //     padding: const EdgeInsets.only(top: 10, right: 15, left: 15, bottom: 0),
+              //     child: CustomBottomsheetScreen(),
+              //   ),
+              // );
+            },
+            fontSize: 12,
+            textColor: Colors.white,
+            bgColor: AppColor.positiveButton,
+            width: 390 * 0.9,
+            height: 50 * 0.9,
+            borderRadius: 10,
+            weight: FontWeight.w500,
+
+          ),
+          const SizedBox(height: 15),
+
+          CustomWidget.elevatedCustomButton(
+            context,
+            "Visit Completed",
+                () {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 builder: (context) => Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
+                  height: MediaQuery.of(context).size.height * 0.2, // ~146.3px
                   decoration: const BoxDecoration(
                     color: AppColor.white,
                     borderRadius: BorderRadius.only(
@@ -523,7 +575,7 @@ class HomeScreen extends StatelessWidget {
                       topRight: Radius.circular(40),
                     ),
                   ),
-                  padding: const EdgeInsets.only(top: 10, right: 15, left: 15, bottom: 0),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
                   child: CustomBottomsheetScreen(),
                 ),
               );
@@ -534,6 +586,7 @@ class HomeScreen extends StatelessWidget {
             width: 390 * 0.9,
             height: 50 * 0.9,
             borderRadius: 10,
+            weight: FontWeight.w500,
           ),
         ],
       ),

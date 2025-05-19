@@ -1,0 +1,5 @@
+import 'package:flutter/material.dart'; import 'package:get/get.dart';
+
+class OTPController extends GetxController { final TextEditingController pinController = TextEditingController(); final FocusNode pinFocus = FocusNode();
+
+@override void onClose() { pinController.dispose(); pinFocus.dispose(); super.onClose(); } }

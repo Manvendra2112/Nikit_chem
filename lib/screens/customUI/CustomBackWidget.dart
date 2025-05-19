@@ -10,7 +10,7 @@ class CustomBackWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
 
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+     margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
 
       color: Colors.white,
       child: textImage( "Today’s Beat Plan")
@@ -21,7 +21,7 @@ class CustomBackWidget extends StatelessWidget {
   Widget textImage(String text)
   {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
 
@@ -36,7 +36,7 @@ class CustomBackWidget extends StatelessWidget {
     text,
     style: TextStyle(
     color: Colors.black,fontWeight: FontWeight.w500,
-  fontSize: 20.0,fontFamily: "Poppins-SemiBold",
+  fontSize: 18.0,fontFamily: "Poppins-SemiBold",
   decoration: TextDecoration.none,
   ),
   ),

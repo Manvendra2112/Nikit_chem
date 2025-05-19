@@ -87,49 +87,48 @@ class CustomWidget {
   }
 
   static Widget textInputFiled(
-    TextEditingController? controller, {
-    String hintText = "",
-    String labelTextNew = "",
-    Widget? suffixIconWidget,
-    Widget? prefixIconWidget,
-    List<TextInputFormatter>? inputFormatters,
-    Widget? label,
-    bool readOnlyFiled = false,
-    bool fillColorFiled = false,
-    Color? fillColors,
-    Color? cursorColors,
-    FocusNode? focusNode,
-    bool passwordHide = false,
-    ValueChanged? onFieldSubmitTap,
-    TextInputType? textInputType,
-    int? maxLine,
-    int? minLine,
-    bool? enabledBox,
-    FormFieldValidator<String>? validator,
-    void Function()? onTapFunction,
-    void Function(String)? onChanged,
-    double? topPadding,
-    double? borderRadius,
-    double? bottomPadding,
-    double? leftPadding,
-    double? rightPadding,
-    TextAlign? textAlign,
-    EdgeInsets? contentPadding,
-    bool isMandatory = false,
-    bool autoFocus = false,
-    bool enableBorder = true,
-    TextCapitalization? textCapitalization,
-    Color? borderColor,
-    double borderWidth = 0,
-    Color? shadowColor,
-    double blurRadius = 0,
-    double offsetX = 0,
-    double offsetY = 0,
-    double? height,
-    double? width,
-    // Added parameter for hint text style
-    TextStyle? hintStyle, // NEW: Parameter to customize hint text style,
-  }) {
+      TextEditingController? controller, {
+        String hintText = "",
+        String labelTextNew = "",
+        Widget? suffixIconWidget,
+        Widget? prefixIconWidget,
+        List<TextInputFormatter>? inputFormatters,
+        Widget? label,
+        bool readOnlyFiled = false,
+        bool fillColorFiled = false,
+        Color? fillColors,
+        Color? cursorColors,
+        FocusNode? focusNode,
+        bool passwordHide = false,
+        ValueChanged? onFieldSubmitTap,
+        TextInputType? textInputType,
+        int? maxLine,
+        int? minLine,
+        bool? enabledBox,
+        FormFieldValidator<String>? validator,
+        void Function()? onTapFunction,
+        void Function(String)? onChanged,
+        double? topPadding,
+        double? borderRadius,
+        double? bottomPadding,
+        double? leftPadding,
+        double? rightPadding,
+        TextAlign? textAlign,
+        EdgeInsets? contentPadding,
+        bool isMandatory = false,
+        bool autoFocus = false,
+        bool enableBorder = true,
+        TextCapitalization? textCapitalization,
+        Color? borderColor,
+        double borderWidth = 0,
+        Color? shadowColor,
+        double blurRadius = 0,
+        double offsetX = 0,
+        double offsetY = 0,
+        double? height,
+        double? width,
+        TextStyle? hintStyle,
+      }) {
     return Padding(
       padding: EdgeInsets.only(
         left: leftPadding ?? 0,
@@ -143,12 +142,12 @@ class CustomWidget {
         decoration: BoxDecoration(
           boxShadow: shadowColor != null
               ? [
-                  BoxShadow(
-                    color: shadowColor,
-                    blurRadius: blurRadius,
-                    offset: Offset(offsetX, offsetY),
-                  ),
-                ]
+            BoxShadow(
+              color: shadowColor,
+              blurRadius: blurRadius,
+              offset: Offset(offsetX, offsetY),
+            ),
+          ]
               : null,
           borderRadius: BorderRadius.circular(borderRadius ?? 10),
         ),
@@ -162,7 +161,7 @@ class CustomWidget {
           onChanged: onChanged,
           onFieldSubmitted: onFieldSubmitTap,
           readOnly: readOnlyFiled,
-          maxLines: maxLine,
+          maxLines: passwordHide ? 1 : (maxLine ?? 1), // Fix: Single line for password fields
           minLines: minLine ?? 1,
           autofocus: autoFocus,
           textInputAction: TextInputAction.next,
@@ -176,36 +175,33 @@ class CustomWidget {
             filled: fillColorFiled,
             suffixIcon: suffixIconWidget,
             prefixIcon: prefixIconWidget,
-            // Modified: Only use label if labelTextNew is provided, to prevent overriding hintText
             label: labelTextNew.isNotEmpty
                 ? label ??
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: labelTextNew,
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 15),
-                          ),
-                          if (isMandatory)
-                            const TextSpan(
-                              text: " *",
-                              style: TextStyle(color: Colors.red, fontSize: 16),
-                            ),
-                        ],
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: labelTextNew,
+                        style: const TextStyle(
+                            color: Colors.black, fontSize: 15),
                       ),
-                    )
-                : null, // NEW: Set to null if no label text to ensure hintText is visible
+                      if (isMandatory)
+                        const TextSpan(
+                          text: " *",
+                          style: TextStyle(color: Colors.red, fontSize: 16),
+                        ),
+                    ],
+                  ),
+                )
+                : null,
             hintText: hintText,
             contentPadding: contentPadding ??
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
-            // Modified: Use provided hintStyle or fallback to default
             hintStyle: hintStyle ??
                 TextStyle(
                   fontSize: 15,
-                  color: AppColor
-                      .textFildtextcolor, // Adjusted opacity for better visibility
-                ), // NEW: Use customizable hintStyle
+                  color: AppColor.textFildtextcolor,
+                ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: borderColor != null
@@ -1044,6 +1040,7 @@ class CustomWidget {
     bool isMandatory = false,
     bool applyFitted = true,
     bool hideLabel = false,
+
     bool hideBorder = false,
     double? height,
     bool enabledBox = true, // Added enabledBox parameter
@@ -1151,32 +1148,35 @@ class CustomWidget {
               ),
             ),
           ),
-          if (!hideLabel)
-            Positioned(
-              left: 20,
-              top: 0,
-              child: Container(
-                color: Colors.white,
-                alignment: Alignment.topCenter,
-                child: Row(
-                  children: [
-                    Text(
-                      " $label ",
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    if (isMandatory)
-                      const Text(
-                        "*",
-                        style: TextStyle(fontSize: 12, color: Colors.red),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+          // if (!hideLabel)
+          //   Positioned(
+          //     left: 20,
+          //     top: 0,
+          //     child: Container(
+          //       color: Colors.white,
+          //       alignment: Alignment.topCenter,
+          //       child: Row(
+          //         children: [
+          //           Text(
+          //             " $label ",
+          //             style: const TextStyle(fontSize: 12),
+          //           ),
+          //           if (isMandatory)
+          //             const Text(
+          //               '',
+          //               style: TextStyle(fontSize: 12, color: Colors.white),
+          //             ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
         ],
       ),
     );
   }
+
+
+
   //
   // // Placeholder for textInputFiled (assumed to exist and support enabledBox)
   // static Widget textInputFiled(

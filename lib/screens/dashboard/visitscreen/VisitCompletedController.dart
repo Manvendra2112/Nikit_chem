@@ -27,12 +27,12 @@ final List<String> quantityOptions = [
   "10"
 ];
 final List<String> productOptions = [
-  "paint",
+  "paint 1",
   "paint 2",
-  "paint3",
+  "paint 3",
   "paint 4",
-  "paint 4",
-  "10"
+  "paint 5",
+  "paint 6"
 ];
 
 //radio button

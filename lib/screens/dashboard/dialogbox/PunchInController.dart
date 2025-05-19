@@ -94,7 +94,7 @@ class PunchInController extends GetxController {
   void toggleFeature(bool value) {
     LoginScreenController logincontroller = Get.put(LoginScreenController(context));
     isPunchedIn = value;
-print("$isPunchedIn");
+    print("$isPunchedIn");
     if (value) {
       punchInTime = timeFormat.format(DateTime.now());
       formattedDate = dateFormat.format(DateTime.now());
@@ -108,7 +108,7 @@ print("$isPunchedIn");
           duration: Duration(seconds: 3));
 
 
-logincontroller.postData(loginModel?.user?.id as String);
+      logincontroller.postData(loginModel?.user?.id as String);
 
 
     }

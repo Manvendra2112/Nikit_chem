@@ -1,7 +1,3 @@
 import 'package:get/get.dart';
 
-class ViewDetailController extends GetxController{
-
-
-
-}
+class ViewDetailController extends GetxController {}

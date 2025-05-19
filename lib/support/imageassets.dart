@@ -36,6 +36,25 @@
     static const String dottedbutton = 'assets/images/dottedbutton.png';
 
     static const String profilenew = 'assets/images/profilenew.jpg';
+    static const String adddealerbutton = 'assets/images/adddealerbutton.png';
+    static const String maps = 'assets/images/maps.png';
+
+    static const String address= 'assets/images/address.png';
+    static const String locationnew = 'assets/images/locationnew.png';
+    static const String phone = 'assets/images/phone.png';
+    static const String successrate = 'assets/images/successrate.png';
+    static const String totalorder = 'assets/images/totalorder.png';
+    static const String totalvisit = 'assets/images/totalvisit.png';
+
+    static const String cross = 'assets/images/cross.png';
+    static const String success= 'assets/images/success.png';
+    static const String notificationicon= 'assets/images/notificationscreen.png';
+    static const String tick= 'assets/images/tick.png';
+    static const String nontick= 'assets/images/nontick.png';
+    static const String ticknew= 'assets/images/ticknew.png';
+
+
+
 
 
 

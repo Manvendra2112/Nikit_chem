@@ -12,6 +12,7 @@ class SelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(SelectionScreenController());
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -74,7 +74,7 @@ class PunchInDialog extends StatelessWidget {
                           ),
                           SizedBox(width: 8),
                           Text(
-                           formattedTime,
+                            formattedTime,
                             style:  TextStyle(fontSize: 14),
                           ),
                         ],
@@ -122,7 +122,7 @@ class PunchInDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                 SizedBox(height: 8),
+                SizedBox(height: 8),
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -132,7 +132,7 @@ class PunchInDialog extends StatelessWidget {
                   child: TextButton(
                     onPressed: controller.skipPunching,
                     child: Text(
-                      "Skip Punching",
+                        "Skip Punching",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),

@@ -44,6 +44,8 @@ class AppColor {
   static const Color headingtext = Color(0xff1E1E1E);
   static const Color pharagraphtext = Color(0xff000000);
   static const Color bgColorpr = Color(0xFFD3AEA1);
+  static const Color textfieldbg = Color(0xFFD9D9D9);
+
 
 
 

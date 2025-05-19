@@ -272,7 +272,7 @@ class AddCarpenterScreenController extends GetxController {
         // Navigate to DashboardScreen and select DealerScreen (index 3)
         Get.offAll(
               () => const DashboardScreen(),
-          arguments: {'selectedIndex': 3, 'refresh': true},
+          arguments: {'selectedIndex': 2, 'refresh': true},
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

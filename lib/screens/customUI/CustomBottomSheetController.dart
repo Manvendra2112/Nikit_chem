@@ -1,7 +1,7 @@
-import 'package:get/get.dart';
+  import 'package:get/get.dart';
 
-class CustomBottomSheetController extends GetxController{
+  class CustomBottomSheetController extends GetxController{
 
 
 
-}
+  }
