@@ -20,6 +20,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final PunchInController controllerpunchin = Get.find<PunchInController>();
     final HomeScreenController controller = Get.find<HomeScreenController>();
+
     double width = CustomWidget.getWidth(context);
     double height = CustomWidget.getHeight(context);
 

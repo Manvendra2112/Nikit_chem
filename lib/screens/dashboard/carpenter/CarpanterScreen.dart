@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:nikitchem/constant/custom_widget.dart';
-import 'package:nikitchem/screens/dashboard/beatplan/BeatPlanController.dart';
 import 'package:nikitchem/screens/dashboard/carpenter/CarpenterController.dart';
 import 'package:nikitchem/screens/dashboard/carpenter/EditCarpenterDetailScreen.dart';
 import 'package:nikitchem/support/app_theme.dart';
 import 'package:dotted_border/dotted_border.dart';
-
 import '../../../support/imageassets.dart';
 import 'AddCarpanterScreen.dart';
+import 'carpanterscreen_model.dart';
 
 class CarpanterScreen extends StatelessWidget {
   CarpanterScreen({super.key});
@@ -19,30 +17,27 @@ class CarpanterScreen extends StatelessWidget {
     double width = CustomWidget.getWidth(context);
     double height = CustomWidget.getHeight(context);
     return GetBuilder<CarpenterController>(
-        init: CarpenterController(),
-        builder: (controller) {
-          return Scaffold(
-              backgroundColor: Colors.white,
-              body: ListView(children: [
-                SizedBox(height: 20),
-                Row(
+      init: CarpenterController(),
+      builder: (controller) {
+        // Call onScreenOpened when the screen is built
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.onScreenOpened();
+        });
+        return WillPopScope(
+          onWillPop: () async {
+            controller.onScreenClosed();
+            return true;
+          },
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Obx(
+                  () => ListView(
+                children: [
+                  SizedBox(height: 20),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // InkWell(
-                      //     onTap: () {
-                      //       Get.back();
-                      //     },
-                      //     child: Container(
-                      //       height: 72,
-                      //       alignment: Alignment.center,
-                      //       margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                      //       child: Image.asset(
-                      //         ImageAssets.backbutton,
-                      //         width: 20,
-                      //         height: 20,
-                      //       ),
-                      //     )),
                       Center(
                         child: Container(
                           height: 72,
@@ -52,113 +47,144 @@ class CarpanterScreen extends StatelessWidget {
                             "Carpenters",
                             maxLines: 2,
                             style: TextStyle(
-                                fontSize: 22,
-                                color: AppColor.headingtext,
-                                fontFamily: "Poppins-SemiBold",
-                                fontWeight: FontWeight.w600),
+                              fontSize: 22,
+                              color: AppColor.headingtext,
+                              fontFamily: "Poppins-SemiBold",
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                    ]),
-                buildSearchField(),
-                SizedBox(height: 10),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                  child: DottedBorder(
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(10),
-                    dashPattern: [6, 4],
-                    color: AppColor.positiveButton,
-                    strokeWidth: 1.5,
-                    child: InkWell(
-                      onTap: () {
-                        Get.to(AddCarpanterScreen(dealerId: ''));
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                        child: Text(
-                          '+ Add Carpenter',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                          textAlign: TextAlign.center,
+                    ],
+                  ),
+                  buildSearchField(controller),
+                  SizedBox(height: 10),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    child: DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: Radius.circular(10),
+                      dashPattern: [6, 4],
+                      color: AppColor.positiveButton,
+                      strokeWidth: 1.5,
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(() => AddCarpanterScreen(dealerId: ''));
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                          child: Text(
+                            '+ Add Carpenter',
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 20, 5),
-                  padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColor.positiveButton)),
-                  width: 410 * 0.9,
-                  height: 99 * 0.9,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                            color: AppColor.bgColor20.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Image.asset(
-                            ImageAssets.dealericon,
-                            width: 11,
-                            height: 10,
+                  controller.isLoading.value
+                      ? Center(child: CircularProgressIndicator())
+                      : controller.filteredCarpenters.isEmpty
+                      ? Center(child: Text("No carpenters found"))
+                      : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: controller.filteredCarpenters.length,
+                    itemBuilder: (context, index) {
+                      final carpenter = controller.filteredCarpenters[index];
+                      return Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(20, 10, 20, 5),
+                            padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppColor.positiveButton),
+                            ),
+                            width: width * 0.9,
+                            height: 99 * 0.9,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    color: AppColor.bgColor20.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Image.asset(
+                                      ImageAssets.dealericon,
+                                      width: 11,
+                                      height: 10,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: width * 0.03),
+                                Expanded(
+                                  child: Text(
+                                    "Carpenter Name: ${carpenter.carpenterName}",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: "Poppins-Medium",
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                CustomWidget.elevatedCustomButton(
+                                  context,
+                                  controller.isExpand[carpenter.id] ?? false
+                                      ? "Hide Details"
+                                      : "View Details",
+                                      () {
+                                    controller.toggleExpansionTile(carpenter.id);
+                                  },
+                                  width: 110,
+                                  height: 39,
+                                  fontSize: 12,
+                                  weight: FontWeight.w500,
+                                  textColor: Colors.white,
+                                  borderRadius: 10,
+                                  padding: Padding(padding: EdgeInsets.all(2)),
+                                  bgColor: AppColor.positiveButton,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                      SizedBox(width: width * 0.03),
-                      Text(
-                        "Carpenter Name : Ashish Kumar",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontFamily: "Poppins-Medium", fontSize: 10),
-                      ),
-                      Spacer(),
-                      CustomWidget.elevatedCustomButton(
-                        context,
-                        controller.isExpand ? "Hide Details" : "View Details",
-                            () {
-                          controller.toggleExpansionTile();
-                          controller.update();
-                          openContainerExpand(context);
-                        },
-                        width: 110,
-                        height: 39,
-                        fontSize: 12,
-                        weight: FontWeight.w500,
-                        textColor: Colors.white,
-                        borderRadius: 10,
-                        padding: Padding(padding: EdgeInsets.all(2)),
-                        bgColor: AppColor.positiveButton,
-                      ),
-                    ],
+                          Visibility(
+                            visible: controller.isExpand[carpenter.id] ?? false,
+                            child: openContainerExpand(context, carpenter),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ),
-                Visibility(
-                  visible: controller.isExpand,
-                  child: openContainerExpand(context),
-                ),
-              ]));
-        });
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
-  Widget openContainerExpand(BuildContext context) {
+  Widget openContainerExpand(BuildContext context, CarpenterModel carpenter) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          border: Border.all(color: AppColor.positiveButton)),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        border: Border.all(color: AppColor.positiveButton),
+      ),
       margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
       padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
       child: Column(
         children: [
-          buildTextView(ImageAssets.phone, "Contact No:", "91+ 9676876464"),
+          buildTextView(ImageAssets.phone, "Contact No:", carpenter.phone),
           SizedBox(height: 5),
-          buildTextView(ImageAssets.address, "Address:", "K-2 Achim Vihar, New Delhi"),
+          buildTextView(ImageAssets.address, "Address:", carpenter.address),
           SizedBox(height: 20),
           Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -166,7 +192,7 @@ class CarpanterScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: AppColor.bgColor20.withOpacity(0.2),
             ),
-            width: 390 * 0.9,
+            width: CustomWidget.getWidth(context) * 0.9,
             height: 60 * 0.9,
             child: Row(
               children: [
@@ -181,7 +207,11 @@ class CarpanterScreen extends StatelessWidget {
                 CustomWidget.elevatedCustomButton(
                   context,
                   "View Details",
-                      () => Get.find<CarpenterController>().showDealerListDialog(context),
+                      () => Get.find<CarpenterController>().showDealerListDialog(
+                      context,
+                      carpenter.dealerList.isNotEmpty
+                          ? carpenter.dealerList[0]
+                          : DealerModel(name: '', address: '', role: '')),
                   width: 117 * 0.9,
                   height: 36 * 0.9,
                   bgColor: AppColor.white,
@@ -197,13 +227,15 @@ class CarpanterScreen extends StatelessWidget {
             context,
             "Edit Details",
                 () {
-              Get.to(() => EditCarpenterDetailScreen());
+              Get.to(() => EditCarpenterDetailScreen(
+                  //carpenterId: carpenter.id.toString()
+              ));
             },
             fontSize: 18,
             weight: FontWeight.w500,
             textColor: Colors.white,
             bgColor: AppColor.positiveButton,
-            width: 390 * 0.9,
+            width: CustomWidget.getWidth(context) * 0.9,
             height: 50 * 0.9,
             borderRadius: 10,
           ),
@@ -212,7 +244,7 @@ class CarpanterScreen extends StatelessWidget {
     );
   }
 
-  Widget buildSearchField() {
+  Widget buildSearchField(CarpenterController controller) {
     return Container(
       margin: EdgeInsets.fromLTRB(15, 10, 15, 2),
       decoration: BoxDecoration(
@@ -220,6 +252,7 @@ class CarpanterScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: TextField(
+        controller: controller.searchController,
         decoration: InputDecoration(
           hintText: "Search Carpenters",
           hintStyle: TextStyle(
@@ -251,8 +284,9 @@ class CarpanterScreen extends StatelessWidget {
               width: 26,
               height: 26,
               decoration: BoxDecoration(
-                  color: AppColor.bgColor20.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20)),
+                color: AppColor.bgColor20.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Image.asset(
@@ -265,19 +299,27 @@ class CarpanterScreen extends StatelessWidget {
             SizedBox(width: 10),
             Container(
               width: 110,
-              child: Text(label,
-                  style: TextStyle(
-                      fontFamily: "Metropolis-Regular",
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600)),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: "Metropolis-Regular",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             SizedBox(width: 5),
-            Text(value,
+            Expanded(
+              child: Text(
+                value,
                 maxLines: 2,
                 style: TextStyle(
-                    fontFamily: "Metropolis-Regular",
-                    fontSize: 10,
-                    fontWeight: FontWeight.w400)),
+                  fontFamily: "Metropolis-Regular",
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
           ],
         )
       ],

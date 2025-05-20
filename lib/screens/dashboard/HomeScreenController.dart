@@ -37,6 +37,7 @@ class HomeScreenController extends GetxController {
   void getUserDetail() async {
     try {
       String? userId = await PreferenceManager.instance.getString(ConstantString.userIdKey);
+      print("the user id is: $userId");
       if (userId == null || userId.isEmpty) {
         Get.snackbar("Error", "User ID not found. Please log in again.");
         loginModel = {'user': {'name': 'User'}}; // Fallback
@@ -138,7 +139,7 @@ class HomeScreenController extends GetxController {
       String token = await PreferenceManager.instance.getString(ConstantString.tokenKey);
       var headers = {
         'Accept': 'application/json',
-        'Cookie': token, // Assumes token includes XSRF-TOKEN and laravel_session
+        'Cookie': token,
       };
 
       var request = http.MultipartRequest(

@@ -113,8 +113,6 @@ class PunchInDialog extends StatelessWidget {
 
                       controller.punchInfromHome();
 
-
-
                     },
                     child: Text(
                       "Punch In",

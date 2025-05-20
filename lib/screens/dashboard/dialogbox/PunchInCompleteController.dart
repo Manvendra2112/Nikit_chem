@@ -21,7 +21,7 @@ class PunchInCompleteController extends GetxController{
     // Start a 30-second timer to close the dialog and navigate
 
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       Get.back(); // Close the dialog
       Get.off(() => DashboardScreen()); // Navigate to DashboardScreen
     });

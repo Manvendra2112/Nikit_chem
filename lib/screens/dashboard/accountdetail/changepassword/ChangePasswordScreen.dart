@@ -22,7 +22,6 @@ class ChangePasswordScreen extends StatelessWidget {
           body: ListView(
             shrinkWrap: true,
             children: [
-            //  SizedBox(height: height * 0.03),
               InkWell(
                 onTap: () {
                   Get.back();
@@ -66,35 +65,42 @@ class ChangePasswordScreen extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
-                child: CustomWidget.textInputFiled(
-                  controller.currepassContr,
-                  enableBorder: false,
-                  borderColor: Colors.transparent,
-                  borderWidth: 1,
-                  bottomPadding: 0,
-                  topPadding: 0,
-                  fillColorFiled: true,
-                  blurRadius: 10,
-                  textInputType: TextInputType.text,
-                  passwordHide: true,
-                  fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
-                  suffixIconWidget: Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Image.asset(
-                      ImageAssets.eye,
-                      width: width * 0.016,
-                      height: 4,
+                child: Obx(
+                      () => CustomWidget.textInputFiled(
+                    controller.currepassContr,
+                    enableBorder: false,
+                    borderColor: Colors.transparent,
+                    borderWidth: 1,
+                    bottomPadding: 0,
+                    topPadding: 0,
+                    fillColorFiled: true,
+                    blurRadius: 10,
+                    textInputType: TextInputType.text,
+                    passwordHide: !controller.showCurrentPassword.value,
+                    fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
+                    suffixIconWidget: GestureDetector(
+                      onTap: controller.toggleCurrentPasswordVisibility,
+                      child: Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Icon(
+                          controller.showCurrentPassword.value
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 16,
+                          color: AppColor.textFildtextcolor,
+                        ),
+                      ),
                     ),
+                    focusNode: controller.currePassword,
+                    hintText: "Edit Password",
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.textFildtextcolor,
+                      fontSize: 14,
+                      fontFamily: "Poppins-Medium",
+                    ),
+                    validator: (value) => controller.validateCurrentPassword(),
                   ),
-                  focusNode: controller.currePassword,
-                  hintText: "Edit Password",
-                  hintStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.textFildtextcolor,
-                    fontSize: 14,
-                    fontFamily: "Poppins-Medium",
-                  ),
-                  validator: (value) => controller.validateCurrentPassword(),
                 ),
               ),
               SizedBox(height: 20),
@@ -112,35 +118,42 @@ class ChangePasswordScreen extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
-                child: CustomWidget.textInputFiled(
-                  controller.newpassContr,
-                  enableBorder: false,
-                  borderColor: Colors.transparent,
-                  borderWidth: 1,
-                  bottomPadding: 0,
-                  topPadding: 0,
-                  fillColorFiled: true,
-                  blurRadius: 10,
-                  textInputType: TextInputType.text,
-                  passwordHide: true,
-                  fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
-                  suffixIconWidget: Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Image.asset(
-                      ImageAssets.eye,
-                      width: width * 0.016,
-                      height: 4,
+                child: Obx(
+                      () => CustomWidget.textInputFiled(
+                    controller.newpassContr,
+                    enableBorder: false,
+                    borderColor: Colors.transparent,
+                    borderWidth: 1,
+                    bottomPadding: 0,
+                    topPadding: 0,
+                    fillColorFiled: true,
+                    blurRadius: 10,
+                    textInputType: TextInputType.text,
+                    passwordHide: !controller.showNewPassword.value,
+                    fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
+                    suffixIconWidget: GestureDetector(
+                      onTap: controller.toggleNewPasswordVisibility,
+                      child: Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Icon(
+                          controller.showNewPassword.value
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 16,
+                          color: AppColor.textFildtextcolor,
+                        ),
+                      ),
                     ),
+                    focusNode: controller.newPassword,
+                    hintText: "Edit Password",
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.textFildtextcolor,
+                      fontSize: 14,
+                      fontFamily: "Poppins-Medium",
+                    ),
+                    validator: (value) => controller.validateNewPassword(),
                   ),
-                  focusNode: controller.newPassword,
-                  hintText: "Edit Password",
-                  hintStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.textFildtextcolor,
-                    fontSize: 14,
-                    fontFamily: "Poppins-Medium",
-                  ),
-                  validator: (value) => controller.validateNewPassword(),
                 ),
               ),
               SizedBox(height: 20),
@@ -158,62 +171,62 @@ class ChangePasswordScreen extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
-                child: CustomWidget.textInputFiled(
-                  controller.confirmpassContr,
-                  enableBorder: false,
-                  borderColor: Colors.transparent,
-                  borderWidth: 1,
-                  bottomPadding: 0,
-                  topPadding: 0,
-                  fillColorFiled: true,
-                  blurRadius: 10,
-                  textInputType: TextInputType.text,
-                  passwordHide: true,
-                  fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
-                  suffixIconWidget: Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Image.asset(
-                      ImageAssets.eye,
-                      width: width * 0.016,
-                      height: 4,
+                child: Obx(
+                      () => CustomWidget.textInputFiled(
+                    controller.confirmpassContr,
+                    enableBorder: false,
+                    borderColor: Colors.transparent,
+                    borderWidth: 1,
+                    bottomPadding: 0,
+                    topPadding: 0,
+                    fillColorFiled: true,
+                    blurRadius: 10,
+                    textInputType: TextInputType.text,
+                    passwordHide: !controller.showConfirmPassword.value,
+                    fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
+                    suffixIconWidget: GestureDetector(
+                      onTap: controller.toggleConfirmPasswordVisibility,
+                      child: Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Icon(
+                          controller.showConfirmPassword.value
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 16,
+                          color: AppColor.textFildtextcolor,
+                        ),
+                      ),
                     ),
+                    focusNode: controller.confiPassword,
+                    hintText: "Enter Password",
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.textFildtextcolor,
+                      fontSize: 14,
+                      fontFamily: "Poppins-Medium",
+                    ),
+                    validator: (value) => controller.validateConfirmPassword(),
                   ),
-                  focusNode: controller.confiPassword,
-                  hintText: "Enter Password",
-                  hintStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.textFildtextcolor,
-                    fontSize: 14,
-                    fontFamily: "Poppins-Medium",
-                  ),
-                  validator: (value) => controller.validateConfirmPassword(),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(15, 20, 10, MediaQuery.of(context).padding.bottom + 15),
-                child: CustomWidget.elevatedCustomButton(
-                  context,
-                  "Continue",
-                      () {
-                    var (error, focusNode) = controller.validateAllFields();
-                    print('Validation error: $error');
-                    if (error == null) {
-                      print('Navigating to EnterNumberScreen');
-                      Get.to(() => EnterNumberScreen());
-                    } else {
-                      print('Showing SnackBar: $error');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(error)),
-                      );
-                      focusNode?.requestFocus();
-                    }
-                  },
-                  fontSize: 20,
-                  textColor: Colors.white,
-                  bgColor: AppColor.positiveButton,
-                  height: height * 0.07,
-                  weight: FontWeight.w500,
-                  borderRadius: 10,
+                child: Obx(
+                      () => CustomWidget.elevatedCustomButton(
+                    context,
+                    controller.isLoading.value ? "Processing..." : "Continue",
+                        () {
+                      if (!controller.isLoading.value) {
+                        controller.changePassword(context);
+                      }
+                    },
+                    fontSize: 20,
+                    textColor: Colors.white,
+                    bgColor: AppColor.positiveButton,
+                    height: height * 0.07,
+                    weight: FontWeight.w500,
+                    borderRadius: 10,
+                  ),
                 ),
               ),
             ],
