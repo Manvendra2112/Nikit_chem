@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:nikitchem/constant/api_constant.dart';
 import 'package:nikitchem/constant/constant_string.dart';
-import 'package:nikitchem/screens/dashboard/DashboardScreen.dart'; // Updated import
+import 'package:nikitchem/screens/dashboard/DashboardScreen.dart';
 import 'package:nikitchem/support/PreferenceManager.dart';
+import 'package:nikitchem/support/alert_dialog_manager.dart';
 import 'dart:convert';
 
 class AddDealerController extends GetxController {
@@ -28,10 +30,20 @@ class AddDealerController extends GetxController {
   final FocusNode nearbyLandmarkFocus = FocusNode();
 
   final RxBool isLoading = false.obs;
+  final RxString selectedState = ''.obs;
+  final RxString selectedCity = ''.obs;
+  final RxList<String> stateList = <String>[].obs;
+  final RxList<String> cityList = <String>[].obs;
 
   final BuildContext context;
 
   AddDealerController(this.context);
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchStates();
+  }
 
   @override
   void onClose() {
@@ -54,6 +66,88 @@ class AddDealerController extends GetxController {
     landmarkFocus.dispose();
     nearbyLandmarkFocus.dispose();
     super.onClose();
+  }
+
+  Future<void> fetchStates() async {
+    isLoading.value = true;
+    update();
+
+    try {
+      var response = await APIConstant.gethitAPI(
+        context,
+        ConstantString.get,
+        ConstantString.getStates,
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response != null) {
+        var responseJson = jsonDecode(response);
+        if (responseJson['code'] == 200 && responseJson['states'] != null) {
+          stateList.clear();
+          stateList.addAll(List<String>.from(responseJson['states']));
+          print('States fetched: ${stateList.length}');
+        } else {
+          AlertDialogManager.getSnackBarMsg(
+            "Error",
+            responseJson['message'] ?? "Failed to fetch states",
+            false,
+            context,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching states: $e');
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to fetch states",
+        false,
+        context,
+      );
+    } finally {
+      isLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> loadCities(String state) async {
+    isLoading.value = true;
+    cityList.clear();
+    update();
+
+    try {
+      var response = await APIConstant.gethitAPI(
+        context,
+        ConstantString.get,
+        "${ConstantString.getCities}/$state",
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response != null) {
+        var responseJson = jsonDecode(response);
+        if (responseJson['code'] == 200 && responseJson['cities'] != null) {
+          cityList.addAll(List<String>.from(responseJson['cities']));
+          print('Cities fetched for $state: ${cityList.length}');
+        } else {
+          AlertDialogManager.getSnackBarMsg(
+            "Error",
+            responseJson['message'] ?? "Failed to fetch cities",
+            false,
+            context,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching cities: $e');
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to fetch cities",
+        false,
+        context,
+      );
+    } finally {
+      isLoading.value = false;
+      update();
+    }
   }
 
   String? validateName(String value) {
@@ -89,10 +183,7 @@ class AddDealerController extends GetxController {
   String? validateState(String value) {
     value = value.trim();
     if (value.isEmpty) {
-      return "Please enter State";
-    }
-    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-      return "State should contain only letters and spaces";
+      return "Please select a State";
     }
     return null;
   }
@@ -100,10 +191,7 @@ class AddDealerController extends GetxController {
   String? validateCity(String value) {
     value = value.trim();
     if (value.isEmpty) {
-      return "Please enter City";
-    }
-    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-      return "City should contain only letters and spaces";
+      return "Please select a City";
     }
     return null;
   }
@@ -128,11 +216,16 @@ class AddDealerController extends GetxController {
   }
 
   Future<void> createDealer(BuildContext context) async {
+    isLoading.value = true;
+    update();
+
     // Validate all fields
     String? nameError = validateName(nameContr.text);
     if (nameError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameError)));
       nameFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -140,6 +233,8 @@ class AddDealerController extends GetxController {
     if (phoneError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(phoneError)));
       phoneFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -147,20 +242,26 @@ class AddDealerController extends GetxController {
     if (emailError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(emailError)));
       emailFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? stateError = validateState(stateContr.text);
+    String? stateError = validateState(selectedState.value);
     if (stateError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(stateError)));
       stateFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? cityError = validateCity(cityContr.text);
+    String? cityError = validateCity(selectedCity.value);
     if (cityError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(cityError)));
       cityFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -168,6 +269,8 @@ class AddDealerController extends GetxController {
     if (addressError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(addressError)));
       addressFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -175,6 +278,8 @@ class AddDealerController extends GetxController {
     if (floorError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(floorError)));
       floorFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -182,6 +287,8 @@ class AddDealerController extends GetxController {
     if (landmarkError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(landmarkError)));
       landmarkFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -189,85 +296,105 @@ class AddDealerController extends GetxController {
     if (nearbyLandmarkError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nearbyLandmarkError)));
       nearbyLandmarkFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
     // Get user_id and token from PreferenceManager
     String? userId = await PreferenceManager.instance.getString(ConstantString.userIdKey);
+    String? token = await PreferenceManager.instance.getString(ConstantString.tokenKey);
+
+    print('User ID: $userId');
+    print('Token: $token');
+
     if (userId == null || userId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User ID not found. Please log in again.")),
       );
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? token = await PreferenceManager.instance.getString(ConstantString.tokenKey);
     if (token == null || token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Token not found. Please log in again.")),
       );
+      isLoading.value = false;
+      update();
       return;
     }
 
-    isLoading.value = true;
-
-    // Prepare request body
-    Map<String, String> requestBody = {
-      'name': nameContr.text.trim(),
-      'phone': phoneContr.text.trim(),
-      'email': emailContr.text.trim(),
-      'user_id': userId,
-      'address': addressContr.text.trim(),
-      'state': stateContr.text.trim(),
-      'city': cityContr.text.trim(),
-      'floor': floorContr.text.trim(),
-      'near_by_land': nearbyLandmarkContr.text.trim(),
-    };
-
-    // Headers with dynamic token
-    Map<String, String> headers = {
-      'Accept': 'application/json',
-      'Cookie': token,
-    };
-
+    // Prepare form-data request
     try {
-      // Make API request
-      var response = await APIConstant.gethitAPI(
-        context,
-        ConstantString.post,
-        'https://pob.volvrit.in/api/v1/users/create-dealer',
-        sendInFeilds: true,
-        body: requestBody,
-        headers: headers,
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://pob.volvrit.in/api/v1/users/create-dealer'),
       );
 
-      // Parse response
-      var responseJson = jsonDecode(response);
-      print('API Success:');
-      print('Status Code: ${responseJson["code"] ?? 200}');
-      print('Response Body: $response');
+      // Add headers
+      request.headers['Accept'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer $token';
 
-      if (responseJson["code"] == 200 || responseJson["code"] == 201) {
+      // Add form fields
+      request.fields['name'] = nameContr.text.trim();
+      request.fields['phone'] = phoneContr.text.trim();
+      request.fields['email'] = emailContr.text.trim();
+      request.fields['user_id'] = userId;
+      request.fields['state'] = selectedState.value;
+      request.fields['city'] = selectedCity.value;
+      request.fields['address'] = addressContr.text.trim();
+      request.fields['floor'] = floorContr.text.trim();
+      request.fields['near_by_land'] = nearbyLandmarkContr.text.trim();
+
+      print('Request URL: ${request.url}');
+      print('Request Headers: ${request.headers}');
+      print('Request Fields: ${request.fields}');
+
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: $responseBody');
+
+      isLoading.value = false;
+      update();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responseJson = jsonDecode(responseBody);
+        print("Dealer API success: $responseBody");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Dealer created successfully")),
         );
-        await Future.delayed(const Duration(seconds: 1)); // Brief delay for feedback
+        await Future.delayed(const Duration(seconds: 1));
         Get.offAll(
               () => const DashboardScreen(),
           arguments: {'selectedIndex': 3, 'refresh': true},
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseJson["message"] ?? "Failed to create dealer")),
+        var responseJson = jsonDecode(responseBody);
+        String errorMessage = responseJson['message'] ?? 'Failed to create dealer';
+        if (responseJson['errors'] != null) {
+          errorMessage += ': ${jsonEncode(responseJson['errors'])}';
+        }
+        AlertDialogManager.getSnackBarMsg(
+          "Error",
+          errorMessage,
+          false,
+          context,
         );
       }
     } catch (e) {
-      print('API Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to create dealer: $e")),
-      );
-    } finally {
       isLoading.value = false;
+      update();
+      print("Error: $e");
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to create dealer: $e",
+        false,
+        context,
+      );
     }
   }
 }

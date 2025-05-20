@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:nikitchem/constant/api_constant.dart';
 import 'package:nikitchem/constant/constant_string.dart';
 import 'package:nikitchem/screens/dashboard/DashboardScreen.dart';
 import 'package:nikitchem/support/PreferenceManager.dart';
+import 'package:nikitchem/support/alert_dialog_manager.dart';
 import 'dart:convert';
 
 class AddCarpenterScreenController extends GetxController {
@@ -65,7 +67,7 @@ class AddCarpenterScreenController extends GetxController {
 
       var headers = {
         'Accept': 'application/json',
-        'Cookie': token,
+        'Authorization': 'Bearer $token',
       };
 
       var body = {
@@ -93,7 +95,9 @@ class AddCarpenterScreenController extends GetxController {
         }).toList());
         // Set selectedDealer based on dealerId
         final matchingDealer = dealerOptions.firstWhereOrNull((option) => option['id'] == dealerId);
-        selectedDealer = matchingDealer != null ? matchingDealer['id']! : (dealerOptions.isNotEmpty ? dealerOptions[0]['id']! : '');
+        selectedDealer = matchingDealer != null
+            ? matchingDealer['id']!
+            : (dealerOptions.isNotEmpty ? dealerOptions[0]['id']! : '');
         print("fetchDealers: Set selectedDealer to $selectedDealer, options: $dealerOptions");
         update();
       } else {
@@ -167,11 +171,16 @@ class AddCarpenterScreenController extends GetxController {
   }
 
   Future<void> createCarpenter(BuildContext context) async {
+    isLoading.value = true;
+    update();
+
     // Validate all fields
     String? nameError = validateName(nameContr.text);
     if (nameError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameError)));
       nameFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -179,6 +188,8 @@ class AddCarpenterScreenController extends GetxController {
     if (phoneError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(phoneError)));
       phoneFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -186,6 +197,8 @@ class AddCarpenterScreenController extends GetxController {
     if (emailError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(emailError)));
       emailFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -193,6 +206,8 @@ class AddCarpenterScreenController extends GetxController {
     if (addressError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(addressError)));
       addressFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -200,93 +215,114 @@ class AddCarpenterScreenController extends GetxController {
     if (remarksError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(remarksError)));
       remarksFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? dealerErreur = validateDealer(selectedDealer);
-    if (dealerErreur != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(dealerErreur)));
+    String? dealerError = validateDealer(selectedDealer);
+    if (dealerError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(dealerError)));
       dealerFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
     // Get user_id and token from PreferenceManager
     String? userId = await PreferenceManager.instance.getString(ConstantString.userIdKey);
+    String? token = await PreferenceManager.instance.getString(ConstantString.tokenKey);
+
+    print('User ID: $userId');
+    print('Token: $token');
+
     if (userId == null || userId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User ID not found. Please log in again.")),
       );
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? token = await PreferenceManager.instance.getString(ConstantString.tokenKey);
     if (token == null || token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Token not found. Please log in again.")),
       );
+      isLoading.value = false;
+      update();
       return;
     }
 
-    isLoading.value = true;
-
-    // Prepare request body
-    Map<String, String> requestBody = {
-      'name': nameContr.text.trim(),
-      'phone': phoneContr.text.trim(),
-      'email': emailContr.text.trim(),
-      'address': addressContr.text.trim(),
-      'remarks': remarksContr.text.trim(),
-      'dealer_id': selectedDealer,
-      'user_id': userId,
-    };
-
-    // Headers with dynamic token
-    Map<String, String> headers = {
-      'Accept': 'application/json',
-      'Cookie': token,
-    };
-
+    // Prepare form-data request
     try {
-      print("createCarpenter: Sending request with body: $requestBody, headers: $headers");
-      // Make API request
-      var response = await APIConstant.gethitAPI(
-        context,
-        ConstantString.post,
-        'https://pob.volvrit.in/api/v1/users/create-carpenter',
-        sendInFeilds: true,
-        body: requestBody,
-        headers: headers,
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://pob.volvrit.in/api/v1/users/create-carpenter'),
       );
 
-      // Parse response
-      var responseJson = jsonDecode(response);
-      print('createCarpenter API Response: $responseJson');
-      print('Status Code: ${responseJson["code"] ?? 200}');
+      // Add headers
+      request.headers['Accept'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer $token';
 
-      if (responseJson["code"] == 200 || responseJson["code"] == 201) {
+      // Add form fields
+      request.fields['name'] = nameContr.text.trim();
+      request.fields['phone'] = phoneContr.text.trim();
+      request.fields['email'] = emailContr.text.trim();
+      request.fields['address'] = addressContr.text.trim();
+      request.fields['remarks'] = remarksContr.text.trim();
+      request.fields['dealer_id'] = selectedDealer;
+      request.fields['user_id'] = userId;
+
+      print('Request URL: ${request.url}');
+      print('Request Headers: ${request.headers}');
+      print('Request Fields: ${request.fields}');
+
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: $responseBody');
+
+      isLoading.value = false;
+      update();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responseJson = jsonDecode(responseBody);
+        print("createCarpenter API Success: $responseBody");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Carpenter created successfully")),
         );
         await Future.delayed(const Duration(seconds: 1));
-        print('Navigating to DashboardScreen with DealerScreen (index 3) and refresh: true');
-        // Navigate to DashboardScreen and select DealerScreen (index 3)
+        print('Navigating to DashboardScreen with selectedIndex: 2, refresh: true');
         Get.offAll(
               () => const DashboardScreen(),
           arguments: {'selectedIndex': 2, 'refresh': true},
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseJson["message"] ?? "Failed to create carpenter")),
+        var responseJson = jsonDecode(responseBody);
+        String errorMessage = responseJson['message'] ?? 'Failed to create carpenter';
+        if (responseJson['errors'] != null) {
+          errorMessage += ': ${jsonEncode(responseJson['errors'])}';
+        }
+        print("createCarpenter: Failed with code ${response.statusCode}, message: $errorMessage");
+        AlertDialogManager.getSnackBarMsg(
+          "Error",
+          errorMessage,
+          false,
+          context,
         );
-        print("createCarpenter: Failed with code ${responseJson["code"]}, message: ${responseJson["message"]}");
       }
     } catch (e) {
-      print("createCarpenter Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to create carpenter: $e")),
-      );
-    } finally {
       isLoading.value = false;
+      update();
+      print("createCarpenter Error: $e");
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to create carpenter: $e",
+        false,
+        context,
+      );
     }
   }
 }

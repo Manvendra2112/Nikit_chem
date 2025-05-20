@@ -6,8 +6,6 @@ import 'package:nikitchem/support/app_theme.dart';
 import 'package:nikitchem/support/imageassets.dart';
 
 class AddCarpanterScreen extends StatelessWidget {
-
-
   final String dealerId;
   const AddCarpanterScreen({super.key, required this.dealerId});
 
@@ -82,6 +80,8 @@ class AddCarpanterScreen extends StatelessWidget {
                     hintText: "Enter Carpenter Name",
                     fillColorFiled: true,
                     enabledBox: !controller.isLoading.value,
+                    borderRadius: 10,
+                    height: height * 0.06,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -104,6 +104,8 @@ class AddCarpanterScreen extends StatelessWidget {
                     fillColorFiled: true,
                     textInputType: TextInputType.phone,
                     enabledBox: !controller.isLoading.value,
+                    borderRadius: 10,
+                    height: height * 0.06,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -126,6 +128,8 @@ class AddCarpanterScreen extends StatelessWidget {
                     fillColorFiled: true,
                     textInputType: TextInputType.emailAddress,
                     enabledBox: !controller.isLoading.value,
+                    borderRadius: 10,
+                    height: height * 0.06,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -147,6 +151,8 @@ class AddCarpanterScreen extends StatelessWidget {
                     hintText: "Enter Address",
                     fillColorFiled: true,
                     enabledBox: !controller.isLoading.value,
+                    borderRadius: 10,
+                    height: height * 0.06,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -179,6 +185,8 @@ class AddCarpanterScreen extends StatelessWidget {
                     hideBorder: false,
                     hideLabel: true,
                     enabledBox: !controller.isLoading.value,
+                   // borderRadius: 10,
+                    height: height * 0.06,
                   ),
                 ),
                 Padding(
@@ -202,7 +210,7 @@ class AddCarpanterScreen extends StatelessWidget {
                   rightPadding: 20,
                   maxLine: 6,
                   minLine: 5,
-                  height: 120 * 0.9,
+                  height: height * 0.12,
                   textInputType: TextInputType.multiline,
                   fillColors: AppColor.textFildtextcolor.withOpacity(0.2),
                   focusNode: controller.remarksFocus,
@@ -210,7 +218,7 @@ class AddCarpanterScreen extends StatelessWidget {
                   fillColorFiled: true,
                   borderRadius: 20,
                 ),
-                SizedBox(height: height*0.06,),
+                SizedBox(height: height * 0.06),
                 Padding(
                   padding: EdgeInsets.fromLTRB(25, 10, 25, 5),
                   child: CustomWidget.elevatedCustomButton(
@@ -220,8 +228,8 @@ class AddCarpanterScreen extends StatelessWidget {
                     fontSize: 20,
                     textColor: Colors.white,
                     bgColor: AppColor.positiveButton,
-                    width: 390 * 0.9,
-                    height: 60 * 0.9,
+                    width: width * 0.9,
+                    height: height * 0.07,
                     borderRadius: 10,
                   ),
                 ),

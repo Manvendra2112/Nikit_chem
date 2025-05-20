@@ -6,7 +6,6 @@ import 'package:nikitchem/constant/api_constant.dart';
 import 'package:nikitchem/constant/constant_string.dart';
 import 'package:nikitchem/screens/login/LoginScreen.dart';
 import 'package:nikitchem/support/alert_dialog_manager.dart';
-import 'package:nikitchem/support/flutter_font_style.dart';
 import 'package:nikitchem/support/imageassets.dart';
 
 import '../../support/app_theme.dart';
@@ -46,11 +45,13 @@ class RegesterScreenController extends GetxController {
 
   // Static Staff List
   final List<String> staffList = [
-    'Manager',
-    'Sales Representative',
-    'Technician',
-    'Support Staff',
-    'Hr Head', // Added to match Postman
+    'Sales Executive',
+    'Sales Promotion Executive',
+    'Team Head',
+    'Carpenter Working Worker',
+    'Calling Staff',
+    'Accounting Staff',
+       'Hr Head'// Added to match Postman
   ];
 
   @override

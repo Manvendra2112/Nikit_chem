@@ -4,6 +4,7 @@ import 'package:nikitchem/constant/api_constant.dart';
 import 'package:nikitchem/constant/constant_string.dart';
 import 'package:nikitchem/screens/dashboard/DashboardScreen.dart';
 import 'package:nikitchem/support/PreferenceManager.dart';
+import 'package:nikitchem/support/alert_dialog_manager.dart';
 import 'dart:convert';
 
 class EditDealerController extends GetxController {
@@ -28,10 +29,20 @@ class EditDealerController extends GetxController {
   final FocusNode nearbyLandmarkFocus = FocusNode();
 
   final RxBool isLoading = false.obs;
+  final RxString selectedState = ''.obs;
+  final RxString selectedCity = ''.obs;
+  final RxList<String> stateList = <String>[].obs;
+  final RxList<String> cityList = <String>[].obs;
 
   final BuildContext context;
 
   EditDealerController(this.context);
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchStates();
+  }
 
   @override
   void onClose() {
@@ -54,6 +65,88 @@ class EditDealerController extends GetxController {
     landmarkFocus.dispose();
     nearbyLandmarkFocus.dispose();
     super.onClose();
+  }
+
+  Future<void> fetchStates() async {
+    isLoading.value = true;
+    update();
+
+    try {
+      var response = await APIConstant.gethitAPI(
+        context,
+        ConstantString.get,
+        ConstantString.getStates,
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response != null) {
+        var responseJson = jsonDecode(response);
+        if (responseJson['code'] == 200 && responseJson['states'] != null) {
+          stateList.clear();
+          stateList.addAll(List<String>.from(responseJson['states']));
+          print('States fetched: ${stateList.length}');
+        } else {
+          AlertDialogManager.getSnackBarMsg(
+            "Error",
+            responseJson['message'] ?? "Failed to fetch states",
+            false,
+            context,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching states: $e');
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to fetch states",
+        false,
+        context,
+      );
+    } finally {
+      isLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> loadCities(String state) async {
+    isLoading.value = true;
+    cityList.clear();
+    update();
+
+    try {
+      var response = await APIConstant.gethitAPI(
+        context,
+        ConstantString.get,
+        "${ConstantString.getCities}/$state",
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response != null) {
+        var responseJson = jsonDecode(response);
+        if (responseJson['code'] == 200 && responseJson['cities'] != null) {
+          cityList.addAll(List<String>.from(responseJson['cities']));
+          print('Cities fetched for $state: ${cityList.length}');
+        } else {
+          AlertDialogManager.getSnackBarMsg(
+            "Error",
+            responseJson['message'] ?? "Failed to fetch cities",
+            false,
+            context,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching cities: $e');
+      AlertDialogManager.getSnackBarMsg(
+        "Error",
+        "Failed to fetch cities",
+        false,
+        context,
+      );
+    } finally {
+      isLoading.value = false;
+      update();
+    }
   }
 
   String? validateName(String value) {
@@ -89,10 +182,7 @@ class EditDealerController extends GetxController {
   String? validateState(String value) {
     value = value.trim();
     if (value.isEmpty) {
-      return "Please enter State";
-    }
-    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-      return "State should contain only letters and spaces";
+      return "Please select a State";
     }
     return null;
   }
@@ -100,10 +190,7 @@ class EditDealerController extends GetxController {
   String? validateCity(String value) {
     value = value.trim();
     if (value.isEmpty) {
-      return "Please enter City";
-    }
-    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-      return "City should contain only letters and spaces";
+      return "Please select a City";
     }
     return null;
   }
@@ -128,11 +215,16 @@ class EditDealerController extends GetxController {
   }
 
   Future<void> createDealer(BuildContext context) async {
+    isLoading.value = true;
+    update();
+
     // Validate all fields
     String? nameError = validateName(nameContr.text);
     if (nameError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameError)));
       nameFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -140,6 +232,8 @@ class EditDealerController extends GetxController {
     if (phoneError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(phoneError)));
       phoneFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -147,20 +241,26 @@ class EditDealerController extends GetxController {
     if (emailError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(emailError)));
       emailFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? stateError = validateState(stateContr.text);
+    String? stateError = validateState(selectedState.value);
     if (stateError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(stateError)));
       stateFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
-    String? cityError = validateCity(cityContr.text);
+    String? cityError = validateCity(selectedCity.value);
     if (cityError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(cityError)));
       cityFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -168,6 +268,8 @@ class EditDealerController extends GetxController {
     if (addressError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(addressError)));
       addressFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -175,6 +277,8 @@ class EditDealerController extends GetxController {
     if (floorError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(floorError)));
       floorFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -182,6 +286,8 @@ class EditDealerController extends GetxController {
     if (landmarkError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(landmarkError)));
       landmarkFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -189,6 +295,8 @@ class EditDealerController extends GetxController {
     if (nearbyLandmarkError != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nearbyLandmarkError)));
       nearbyLandmarkFocus.requestFocus();
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -198,6 +306,8 @@ class EditDealerController extends GetxController {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User ID not found. Please log in again.")),
       );
+      isLoading.value = false;
+      update();
       return;
     }
 
@@ -206,6 +316,8 @@ class EditDealerController extends GetxController {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Token not found. Please log in again.")),
       );
+      isLoading.value = false;
+      update();
       return;
     }
 

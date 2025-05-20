@@ -478,7 +478,7 @@ class RegesterScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
                   child: CustomWidget.elevatedCustomButton(
                     context,
-                    controller.isLoading.value ? "Submitting..." : "Submit",
+                    controller.isLoading.value ? "Submit" : "Submit",
                     controller.isLoading.value ? () {} : () => controller.createAccount(context),
                     fontSize: screenWidth * 0.045,
                     textColor: Colors.white,
