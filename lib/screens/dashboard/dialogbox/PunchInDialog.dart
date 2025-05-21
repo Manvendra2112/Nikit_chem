@@ -130,7 +130,7 @@ class PunchInDialog extends StatelessWidget {
                   child: TextButton(
                     onPressed: controller.skipPunching,
                     child: Text(
-                        "Skip Punching",
+                      "Skip Punching",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),

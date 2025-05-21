@@ -44,14 +44,7 @@ Container(alignment: Alignment.center,
   child: Text("Login to your Account",style: TextStyle(fontSize: 24,
       fontWeight: FontWeight.w600,fontFamily: "Poppins-SemiBold"),),
 ),
-SizedBox(height: 5,),
-              Container(alignment: Alignment.center,
-                child: Text("Lorem ipsum dolor sit amet, consectetur adipiscing ",
-                  style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,
-                fontFamily: "Cabin-Regular"
-                ) ,),
-              ),
-                SizedBox(height: 10,),
+                SizedBox(height: 40,),
               Padding(
                 padding:  EdgeInsets.fromLTRB(37, 5, 25, 0),
                 child: Text("Email Address / Phone Number",style: TextStyle(fontSize: 16,
@@ -139,8 +132,8 @@ suffixIconWidget: InkWell(
                     },
                     child: Text("Forget Password?",style: TextStyle(fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.underline, // Underline style
-                        decorationColor: Colors.blue,
+                       // decoration: TextDecoration.underline, // Underline style
+                       // decorationColor: Colors.blue,
                         fontFamily: "Cabin-Regular"),),
                   ),
                 ),

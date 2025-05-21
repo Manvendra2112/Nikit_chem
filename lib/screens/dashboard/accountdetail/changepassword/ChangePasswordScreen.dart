@@ -214,7 +214,7 @@ class ChangePasswordScreen extends StatelessWidget {
                 child: Obx(
                       () => CustomWidget.elevatedCustomButton(
                     context,
-                    controller.isLoading.value ? "Processing..." : "Continue",
+                    controller.isLoading.value ? "Continue..." : "Continue",
                         () {
                       if (!controller.isLoading.value) {
                         controller.changePassword(context);

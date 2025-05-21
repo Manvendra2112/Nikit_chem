@@ -50,8 +50,8 @@ class CarpenterController extends GetxController {
 
       if (userId == null || userId.isEmpty || token == null || token.isEmpty) {
         if (isScreenActive.value && !Get.isSnackbarOpen) {
-          Get.snackbar('Error', 'User ID or token not found. Please log in again.',
-              backgroundColor: Colors.red, colorText: Colors.white);
+         // Get.snackbar('Error', 'User ID or token not found. Please log in again.',
+             // backgroundColor: Colors.red, colorText: Colors.white);
         }
         return;
       }
@@ -85,15 +85,15 @@ class CarpenterController extends GetxController {
         }
       } else {
         if (isScreenActive.value && !Get.isSnackbarOpen) {
-          Get.snackbar('Error', responseJson['message'] ?? 'Failed to fetch carpenters',
-              backgroundColor: Colors.red, colorText: Colors.white);
+          //Get.snackbar('Error', responseJson['message'] ?? 'Failed to fetch carpenters',
+             // backgroundColor: Colors.red, colorText: Colors.white);
         }
       }
     } catch (e) {
       print("Carpenter Fetch Exception: $e");
       if (isScreenActive.value && !Get.isSnackbarOpen) {
-        Get.snackbar('Error', 'Network error: Unable to fetch carpenters',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        //Get.snackbar('Error', 'Network error: Unable to fetch carpenters',
+            //backgroundColor: Colors.red, colorText: Colors.white);
       }
     } finally {
       isLoading.value = false;

@@ -122,7 +122,7 @@ class HomeScreen extends StatelessWidget {
                         controllerpunchin.isPunchedIn
                             ? "Punch - In ${controllerpunchin.punchInTime.isNotEmpty ? controllerpunchin.punchInTime : controllerpunchin.formattedTime}, ${controllerpunchin.formattedDate}"
                             : "Punch - Out ${controllerpunchin.punchOutTime}",
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontSize: 15 ,color: Colors.black, fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(width: 15),
@@ -187,10 +187,10 @@ class HomeScreen extends StatelessWidget {
                         "View Plan",
                             () {
                           //controller.openLocationDialog();
-                              Get.offAll(
-                                    () => const DashboardScreen(),
-                                arguments: {'selectedIndex': 1, 'refresh': true},
-                              );
+                          Get.offAll(
+                                () => const DashboardScreen(),
+                            arguments: {'selectedIndex': 1, 'refresh': true},
+                          );
                         },
                         width: 125 * 0.9,
                         height: 39 * 0.9,

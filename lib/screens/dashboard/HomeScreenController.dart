@@ -169,7 +169,7 @@ class HomeScreenController extends GetxController {
           isExpanded.assignAll(List<bool>.filled(visitData.length, false));
           print("Visit Data fetched: $visitData");
         } else {
-         // Get.snackbar("Error", responseJson["message"] ?? "Failed to fetch visit data");
+          // Get.snackbar("Error", responseJson["message"] ?? "Failed to fetch visit data");
           print("fetchVisitData API Error: ${responseJson["message"]}");
         }
       } else {

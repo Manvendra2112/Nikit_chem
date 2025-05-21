@@ -306,23 +306,23 @@ class AddCarpenterScreenController extends GetxController {
           errorMessage += ': ${jsonEncode(responseJson['errors'])}';
         }
         print("createCarpenter: Failed with code ${response.statusCode}, message: $errorMessage");
-        AlertDialogManager.getSnackBarMsg(
-          "Error",
-          errorMessage,
-          false,
-          context,
-        );
+        // AlertDialogManager.getSnackBarMsg(
+        //   "Error",
+        //   errorMessage,
+        //   false,
+        //   context,
+        // );
       }
     } catch (e) {
       isLoading.value = false;
       update();
       print("createCarpenter Error: $e");
-      AlertDialogManager.getSnackBarMsg(
-        "Error",
-        "Failed to create carpenter: $e",
-        false,
-        context,
-      );
+      // AlertDialogManager.getSnackBarMsg(
+      //   "Error",
+      //   "Failed to create carpenter: $e",
+      //   false,
+      //   context,
+      // );
     }
   }
 }
